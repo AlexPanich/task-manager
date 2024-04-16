@@ -1,10 +1,11 @@
 export const Color = {
 	primary: '#756ef3',
+	primaryHover: '#9893F9',
 	secondary: '#d1e2fe',
 	primaryText: '#002055',
 	secondaryText: '#868d95',
 	border: '#e9f1ff',
-	withe: '#ffffff',
+	white: '#ffffff',
 	green: '#8bb35a',
 	lightGreen: '#c4e29f',
 	gray: '#848a94',
@@ -33,4 +34,6 @@ export const Radius = {
 	r30: 30,
 };
 
-export const Gap = {};
+export const Gap = {
+	g30: 30,
+};

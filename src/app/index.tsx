@@ -3,9 +3,9 @@ import { Color, Font } from '@/shared/tokens';
 import { Link } from 'expo-router';
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+export default function WelcomePage() {
 	return (
-		<View style={styles.container}>
+		<View style={styles.wrapper}>
 			<ImageBackground
 				source={require('../assets/images/index-back.png')}
 				resizeMode="cover"
@@ -15,7 +15,7 @@ export default function App() {
 				<Text style={styles.promo}>
 					Управляй <Text style={styles.promoAccent}>Задачами</Text> и достигай результата ✌
 				</Text>
-				<Link href="/" style={styles.arrowLink}>
+				<Link href="/create-account" style={styles.arrowLink}>
 					<ArrowRightIcon />
 				</Link>
 			</ImageBackground>
@@ -24,9 +24,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	wrapper: {
 		flex: 1,
-		backgroundColor: Color.withe,
+		backgroundColor: Color.white,
 	},
 	image: {
 		flex: 1,
