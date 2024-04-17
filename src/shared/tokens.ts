@@ -9,6 +9,7 @@ export const Color = {
 	green: '#8bb35a',
 	lightGreen: '#c4e29f',
 	gray: '#848a94',
+	overlay: '#00000040',
 };
 
 export const Font = {
@@ -30,10 +31,13 @@ export const Font = {
 
 export const Radius = {
 	r2_5: 2.5,
+	r12: 12,
 	r16: 16,
 	r30: 30,
 };
 
 export const Gap = {
+	g10: 10,
+	g12: 12,
 	g30: 30,
 };

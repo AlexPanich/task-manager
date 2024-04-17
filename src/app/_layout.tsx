@@ -54,6 +54,14 @@ export default function RootLayout() {
 							headerLeft: () => '',
 						}}
 					/>
+					<Stack.Screen
+						name="(tabs)"
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen name="add-task" />
+					<Stack.Screen name="add-project" />
 				</Stack>
 			</SafeAreaProvider>
 		</Provider>

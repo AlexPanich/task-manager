@@ -7,11 +7,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store/store';
 import { userActions } from '@/store/user.slice';
+import { useRouter } from 'expo-router';
 
 export default function CreateAccountPage() {
 	const insets = useSafeAreaInsets();
 	const { name, surname } = useSelector((state: RootState) => state.user);
 	const dispatch = useDispatch<AppDispatch>();
+	const router = useRouter();
 
 	const setName = (text: string) => {
 		dispatch(userActions.setName(text));
@@ -29,7 +31,7 @@ export default function CreateAccountPage() {
 				<Input placeholder="Ваше имя" value={name} onChangeText={setName} />
 				<Input placeholder="Ваша фамилия" value={surname} onChangeText={setSurname} />
 			</View>
-			<Button title="Начать" />
+			<Button title="Начать" onPress={() => router.push('/(tabs)/home')} />
 		</View>
 	);
 }
