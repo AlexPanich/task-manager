@@ -34,10 +34,13 @@ export const Radius = {
 	r12: 12,
 	r16: 16,
 	r30: 30,
+	r50: 50,
 };
 
 export const Gap = {
 	g10: 10,
 	g12: 12,
+	g16: 16,
+	g26: 25,
 	g30: 30,
 };

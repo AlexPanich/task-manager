@@ -1,14 +1,16 @@
 import {
 	NativeSyntheticEvent,
 	StyleSheet,
+	Text,
 	TextInput,
 	TextInputFocusEventData,
 	TextInputProps,
+	View,
 } from 'react-native';
-import { Color, Font, Radius } from '../tokens';
+import { Color, Font, Gap, Radius } from '../tokens';
 import { useState } from 'react';
 
-export default function Input({ style, ...props }: TextInputProps) {
+export default function Input({ style, label, ...props }: TextInputProps & { label?: string }) {
 	const [focused, setFocused] = useState<boolean>(false);
 
 	const handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
@@ -20,17 +22,28 @@ export default function Input({ style, ...props }: TextInputProps) {
 		props.onBlur && props.onBlur(event);
 	};
 	return (
-		<TextInput
-			style={[styles.input, { borderColor: focused ? Color.primary : Color.border }, style]}
-			placeholderTextColor={Color.secondaryText}
-			{...props}
-			onFocus={handleFocus}
-			onBlur={handleBlur}
-		/>
+		<View style={styles.wrapper}>
+			{label && <Text style={styles.label}>{label}</Text>}
+			<TextInput
+				style={[styles.input, { borderColor: focused ? Color.primary : Color.border }, style]}
+				placeholderTextColor={Color.secondaryText}
+				{...props}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
+			/>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
+	wrapper: {
+		gap: Gap.g16,
+	},
+	label: {
+		color: Color.gray,
+		fontSize: Font.size.f14,
+		fontFamily: Font.family.regular,
+	},
 	input: {
 		height: 60,
 		paddingHorizontal: 20,

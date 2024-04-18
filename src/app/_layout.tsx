@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, useRouter } from 'expo-router';
 import { Provider } from 'react-redux';
 import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Color, Font } from '@/shared/tokens';
 import { store } from '@/store/store';
+import RoundButton from '@/shared/RoundButton/RoundButton';
+import ArrowBackIcon from '@/assets/icons/arrow-back';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+	const router = useRouter();
+
 	const [fontsLoaded, fontError] = useFonts({
 		'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
 		'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -61,7 +65,17 @@ export default function RootLayout() {
 						}}
 					/>
 					<Stack.Screen name="add-task" />
-					<Stack.Screen name="add-project" />
+					<Stack.Screen
+						name="add-project"
+						options={{
+							headerTitle: 'Добавить проект',
+							headerLeft: () => (
+								<RoundButton onPress={() => router.back()}>
+									<ArrowBackIcon />
+								</RoundButton>
+							),
+						}}
+					/>
 				</Stack>
 			</SafeAreaProvider>
 		</Provider>
