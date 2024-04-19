@@ -8,11 +8,13 @@ import { Color, Font } from '@/shared/tokens';
 import { store } from '@/store/store';
 import RoundButton from '@/shared/RoundButton/RoundButton';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
+import useLoadDB from '@/DB/dataBase';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const router = useRouter();
+	const [dbLoaded, dbError] = useLoadDB();
 
 	const [fontsLoaded, fontError] = useFonts({
 		'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
@@ -21,12 +23,16 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if (fontsLoaded || fontError) {
+		if ((fontsLoaded || fontError) && (dbLoaded || dbError)) {
 			SplashScreen.hideAsync();
 		}
 	}, [fontsLoaded, fontError]);
 
 	if (!fontsLoaded && !fontError) {
+		return null;
+	}
+
+	if (!dbLoaded && !dbError) {
 		return null;
 	}
 

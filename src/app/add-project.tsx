@@ -1,34 +1,37 @@
 import Button from '@/shared/Button/Button';
-import ImageSelect from '@/shared/ImageSelect/ImageSelect';
+import CategorySelect from '@/shared/CategorySelect/CategorySelect';
 import Input from '@/shared/Input/Input';
 import { Color, Gap } from '@/shared/tokens';
-import { projectsActions } from '@/store/projects.slice';
+import { ProjectBody, categories, saveProject } from '@/store/projects.slice';
+import { useAppDispatch } from '@/store/store';
 import { useState } from 'react';
-import { ImageSourcePropType, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
-
-const images: ImageSourcePropType[] = [
-	require('../assets/images/home.png'),
-	require('../assets/images/work.png'),
-	require('../assets/images/creation.png'),
-];
 
 export default function AddProjectPage() {
-	const [image, setImage] = useState(images[0]);
+	const [category, setCategory] = useState(categories[0]);
 	const [name, setName] = useState<string>('');
 	const [direction, setDirection] = useState<string>('');
 	const insets = useSafeAreaInsets();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	const addProject = () => {
-		dispatch(projectsActions.addProject({ image, name, direction }));
+		if (!name || !direction) {
+			return;
+		}
+		const project: ProjectBody = { category, name, direction };
+
+		dispatch(saveProject(project));
 	};
 
 	return (
 		<View style={styles.container}>
 			<View>
-				<ImageSelect items={images} value={image} onSelect={(image) => setImage(image)} />
+				<CategorySelect
+					items={categories}
+					value={category}
+					onSelect={(category) => setCategory(category)}
+				/>
 				<View style={styles.fields}>
 					<Input label="Назваине" value={name} onChangeText={setName} />
 					<Input label="Направление" value={direction} onChangeText={setDirection} />

@@ -1,19 +1,20 @@
-import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import RoundButton from '../RoundButton/RoundButton';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
 import ArrowForwardIcon from '@/assets/icons/arrow-forward';
 import { Gap, Radius } from '../tokens';
+import { Category } from '@/store/projects.slice';
 
-export default function ImageSelect<T extends ImageSourcePropType>({
+export default function CategorySelect({
 	value,
 	items,
 	onSelect,
 }: {
-	value: T;
-	items: T[];
-	onSelect: (value: T) => void;
+	value: Category;
+	items: Category[];
+	onSelect: (value: Category) => void;
 }) {
-	const index = items.findIndex((item) => item === value);
+	const index = items.findIndex((item) => item.name === value.name);
 	const prev = index > 0 ? index - 1 : items.length - 1;
 	const next = index < items.length - 1 ? index + 1 : 0;
 
@@ -22,7 +23,7 @@ export default function ImageSelect<T extends ImageSourcePropType>({
 			<RoundButton onPress={() => onSelect(items[prev])}>
 				<ArrowBackIcon />
 			</RoundButton>
-			<Image source={items[index]} style={styles.image} />
+			<Image source={items[index].image} style={styles.image} />
 			<RoundButton onPress={() => onSelect(items[next])}>
 				<ArrowForwardIcon />
 			</RoundButton>
