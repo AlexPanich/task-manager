@@ -72,19 +72,24 @@ export async function insert(table: string, values: Record<string, string | numb
 export async function select<T>(
 	table: string,
 	columns?: string[],
+	where?: { column: string; op: string; value: string }[],
 	orderBy?: Record<string, 'ASC' | 'DESC'>,
 ) {
 	let rows: T[] = [];
+	const sqlSelect = `SELECT ${columns ? columns.join(', ') : '*'} FROM ${table}`;
+	const sqlWhere = where
+		? 'WHERE ' + where.map((w) => `${w.column} ${w.op} '%${w.value}%'`).join(' OR ')
+		: '';
+	const sqlOrderBy = orderBy
+		? 'ORDER BY ' +
+			Object.entries(orderBy)
+				.map(([k, v]) => `${k} ${v}`)
+				.join(', ')
+		: '';
+	const sql = [sqlSelect, sqlWhere, sqlOrderBy].filter(Boolean).join(' ');
+
 	try {
 		await db.transactionAsync(async (tx) => {
-			const sql = `SELECT ${columns ? columns.join(', ') : '*'} FROM ${table} ${
-				orderBy
-					? 'ORDER BY ' +
-						Object.entries(orderBy)
-							.map(([k, v]) => `${k} ${v}`)
-							.join(', ')
-					: ''
-			}`;
 			const result = await tx.executeSqlAsync(sql, []);
 			rows = result.rows as T[];
 		}, true);

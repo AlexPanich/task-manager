@@ -1,5 +1,5 @@
 import { insert, select } from '@/DB/dataBase';
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ImageSourcePropType } from 'react-native';
 
 export type CategoryName = 'Default' | 'Home' | 'Work' | 'Creation';
@@ -47,8 +47,19 @@ export const saveProject = createAsyncThunk('projects/save', async (project: Pro
 		name: project.name,
 		direction: project.direction,
 	});
+});
 
-	const rows = await select<ProjectDB>('Projects', undefined, { id: 'ASC' });
+export const loadProjects = createAsyncThunk('projects/load', async (search: string) => {
+	const table = 'Projects';
+	const where = search
+		? [
+				{ column: 'name', op: 'LIKE', value: search },
+				{ column: 'direction', op: 'LIKE', value: search },
+			]
+		: undefined;
+	const orderBy = { id: 'ASC' } as const;
+
+	const rows = await select<ProjectDB>(table, undefined, where, orderBy);
 
 	return mapFromDB(rows);
 });
@@ -56,13 +67,9 @@ export const saveProject = createAsyncThunk('projects/save', async (project: Pro
 export const projectsSlice = createSlice({
 	name: 'projects',
 	initialState,
-	reducers: {
-		addProject: (state, action: PayloadAction<Project>) => {
-			state.projects.push(action.payload);
-		},
-	},
+	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(saveProject.fulfilled, (state, action) => {
+		builder.addCase(loadProjects.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.projects = action.payload;
 			}

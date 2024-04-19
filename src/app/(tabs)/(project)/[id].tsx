@@ -1,10 +1,14 @@
-import { Color } from '@/shared/tokens';
 import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Color } from '@/shared/tokens';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function ProjectsPage() {
+export default function Project() {
+	const { id } = useLocalSearchParams();
+
 	return (
 		<View style={styles.container}>
-			<Text>ProjectsPage</Text>
+			<Text>Project {id}</Text>
 		</View>
 	);
 }

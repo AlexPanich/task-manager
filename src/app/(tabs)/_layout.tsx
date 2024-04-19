@@ -109,7 +109,7 @@ export default function TabsLayout() {
 					}}
 				/>
 				<Tabs.Screen
-					name="projects"
+					name="(project)"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <FolderActiveIcon /> : <FolderIcon />),
 						tabBarItemStyle: styles.itemRight,
@@ -135,13 +135,13 @@ export default function TabsLayout() {
 					>
 						<View style={styles.line} />
 						<View style={styles.links}>
-							<Link href="/add-task" asChild>
+							<Link href="/add-task" asChild onPress={close}>
 								<Pressable style={styles.link}>
 									<EditIcon />
 									<Text style={styles.linkText}>Добавить задачу</Text>
 								</Pressable>
 							</Link>
-							<Link href="/add-project" asChild>
+							<Link href="/add-project" asChild onPress={close}>
 								<Pressable style={styles.link}>
 									<PlusOutlineIcon />
 									<Text style={styles.linkText}>Добавить проект</Text>
