@@ -1,15 +1,15 @@
 import Button from '@/shared/Button/Button';
-import CategorySelect from '@/shared/CategorySelect/CategorySelect';
+import PictureSelect from '@/components/PictureSelect/PictureSelect';
 import Input from '@/shared/Input/Input';
 import { Color, Gap } from '@/shared/tokens';
-import { ProjectBody, categories, saveProject } from '@/store/projects.slice';
+import { ProjectBody, pictures, saveProject } from '@/store/projects.slice';
 import { useAppDispatch } from '@/store/store';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AddProjectPage() {
-	const [category, setCategory] = useState(categories[0]);
+	const [picture, setPicture] = useState(pictures[0]);
 	const [name, setName] = useState<string>('');
 	const [direction, setDirection] = useState<string>('');
 	const insets = useSafeAreaInsets();
@@ -19,7 +19,7 @@ export default function AddProjectPage() {
 		if (!name || !direction) {
 			return;
 		}
-		const project: ProjectBody = { category, name, direction };
+		const project: ProjectBody = { picture, name, direction };
 
 		dispatch(saveProject(project));
 	};
@@ -27,10 +27,13 @@ export default function AddProjectPage() {
 	return (
 		<View style={styles.container}>
 			<View>
-				<CategorySelect
-					items={categories}
-					value={category}
-					onSelect={(category) => setCategory(category)}
+				<PictureSelect
+					items={pictures}
+					value={picture}
+					onSelect={(picture) => {
+						console.log(picture);
+						setPicture(picture);
+					}}
 				/>
 				<View style={styles.fields}>
 					<Input label="Назваине" value={name} onChangeText={setName} />

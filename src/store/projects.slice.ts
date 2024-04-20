@@ -2,10 +2,10 @@ import { insert, select } from '@/DB/dataBase';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ImageSourcePropType } from 'react-native';
 
-export type CategoryName = 'Default' | 'Home' | 'Work' | 'Creation';
-export type Category = { name: CategoryName; image: ImageSourcePropType };
+export type PictureType = 'Default' | 'Home' | 'Work' | 'Creation';
+export type Picture = { name: PictureType; image: ImageSourcePropType };
 
-export const categories: Category[] = [
+export const pictures: Picture[] = [
 	{ name: 'Default', image: require('../assets/images/default.png') },
 	{ name: 'Home', image: require('../assets/images/home.png') },
 	{ name: 'Work', image: require('../assets/images/work.png') },
@@ -14,7 +14,7 @@ export const categories: Category[] = [
 
 export type Project = {
 	id: number;
-	category: Category;
+	picture: Picture;
 	name: string;
 	direction: string;
 };
@@ -23,7 +23,7 @@ export type ProjectBody = Omit<Project, 'id'>;
 
 type ProjectDB = {
 	id: number;
-	category: CategoryName;
+	picture: PictureType;
 	name: string;
 	direction: string;
 };
@@ -31,7 +31,7 @@ type ProjectDB = {
 function mapFromDB(rows: ProjectDB[]): Project[] {
 	return rows.map((r) => ({
 		id: r.id,
-		category: categories.find((c) => (c.name = r.category)) || categories[0],
+		picture: pictures.find((c) => c.name === r.picture) || pictures[0],
 		name: r.name,
 		direction: r.direction,
 	}));
@@ -43,7 +43,7 @@ const initialState: ProjectsState = { projects: [] };
 
 export const saveProject = createAsyncThunk('projects/save', async (project: ProjectBody) => {
 	await insert('Projects', {
-		category: project.category.name,
+		pictures: project.picture.name,
 		name: project.name,
 		direction: project.direction,
 	});

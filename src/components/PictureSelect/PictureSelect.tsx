@@ -1,22 +1,24 @@
 import { Image, StyleSheet, View } from 'react-native';
-import RoundButton from '../RoundButton/RoundButton';
+import RoundButton from '../../shared/RoundButton/RoundButton';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
 import ArrowForwardIcon from '@/assets/icons/arrow-forward';
-import { Gap, Radius } from '../tokens';
-import { Category } from '@/store/projects.slice';
+import { Gap, Radius } from '../../shared/tokens';
+import { Picture } from '@/store/projects.slice';
 
-export default function CategorySelect({
+export default function PictureSelect({
 	value,
 	items,
 	onSelect,
 }: {
-	value: Category;
-	items: Category[];
-	onSelect: (value: Category) => void;
+	value: Picture;
+	items: Picture[];
+	onSelect: (value: Picture) => void;
 }) {
 	const index = items.findIndex((item) => item.name === value.name);
 	const prev = index > 0 ? index - 1 : items.length - 1;
 	const next = index < items.length - 1 ? index + 1 : 0;
+
+	console.log(prev, index, next);
 
 	return (
 		<View style={styles.wrapper}>

@@ -1,5 +1,5 @@
 import SearchIcon from '@/assets/icons/search';
-import ProjectCard from '@/components/ProjectCard';
+import ProjectCard from '@/components/ProjectCard/ProjectCard';
 import Input from '@/shared/Input/Input';
 import { Color, Font, Gap } from '@/shared/tokens';
 import { loadProjects } from '@/store/projects.slice';
@@ -8,15 +8,20 @@ import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function ProjectsPage() {
 	const [search, setSearch] = useState<string>('');
 	const { projects } = useSelector((state: RootState) => state.projects);
 	const dispatch = useAppDispatch();
+	const isFoucused = useIsFocused();
 
 	useEffect(() => {
+		if (!isFoucused) {
+			return;
+		}
 		dispatch(loadProjects(search));
-	}, [search]);
+	}, [search, isFoucused]);
 
 	return (
 		<View style={styles.container}>
@@ -31,7 +36,7 @@ export default function ProjectsPage() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
 				{projects.map((project) => (
-					<ProjectCard {...project} />
+					<ProjectCard key={project.id} {...project} />
 				))}
 			</ScrollView>
 			<Link href={`/(tabs)/(project)/1`}>

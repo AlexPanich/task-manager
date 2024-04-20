@@ -4,7 +4,7 @@ import { Link } from 'expo-router';
 import { Project } from '@/store/projects.slice';
 import { Color, Font, Radius } from '@/shared/tokens';
 
-export default function ProjectCard({ id, name, category, direction }: Project) {
+export default function ProjectCard({ id, name, picture, direction }: Project) {
 	return (
 		<Link href={`/(tabs)/(project)/${id}`} asChild>
 			<Pressable>
@@ -15,7 +15,7 @@ export default function ProjectCard({ id, name, category, direction }: Project) 
 					</View>
 					<Text style={styles.direction}>{direction}</Text>
 					<View style={styles.body}>
-						<Image source={category.image} style={styles.image} />
+						<Image source={picture.image} style={styles.image} />
 						<View style={styles.progress}>
 							<View style={styles.bar} />
 						</View>

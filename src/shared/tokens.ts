@@ -10,6 +10,7 @@ export const Color = {
 	lightGreen: '#c4e29f',
 	gray: '#848a94',
 	overlay: '#00000040',
+	transparent: '#ffffff00',
 };
 
 export const Font = {
@@ -34,6 +35,7 @@ export const Radius = {
 	r4: 4,
 	r12: 12,
 	r16: 16,
+	r18: 18,
 	r30: 30,
 	r50: 50,
 };

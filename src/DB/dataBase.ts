@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const dbName = 'mySQLiteDB.db';
 
@@ -14,7 +14,7 @@ async function createDatabase() {
 				CREATE TABLE IF NOT EXISTS Projects 
 				(
 					  id INTEGER PRIMARY KEY AUTOINCREMENT,
-					  category TEXT NOT NULL CHECK (category IN ('Home', 'Work', 'Creation', 'Default')),
+					  picture TEXT NOT NULL CHECK (picture IN ('Home', 'Work', 'Creation', 'Default')),
 					  name TEXT NOT NULL,
 					  direction TEXT NOT NULL,
 					  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -32,8 +32,11 @@ async function loadDatabase() {
 			intermediates: true,
 		});
 		await createDatabase();
+		console.log('База данных создана');
 	} else {
 		db = SQLite.openDatabase(dbName);
+		console.log('База данных загружена');
+		// FileSystem.deleteAsync(dbFilePath);
 	}
 }
 
@@ -41,9 +44,11 @@ export default function useLoadDB() {
 	const [loaded, setLoaded] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	loadDatabase()
-		.then(() => setLoaded(true))
-		.catch((err) => setError(`Ошибка подключения к базе данных: ${err.message}`));
+	useEffect(() => {
+		loadDatabase()
+			.then(() => setLoaded(true))
+			.catch((err) => setError(`Ошибка подключения к базе данных: ${err.message}`));
+	}, []);
 
 	return [loaded, error];
 }
