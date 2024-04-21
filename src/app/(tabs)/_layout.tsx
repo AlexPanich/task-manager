@@ -102,7 +102,7 @@ export default function TabsLayout() {
 				}}
 			>
 				<Tabs.Screen
-					name="home"
+					name="(tasks)"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <HomeActiveIcon /> : <HomeIcon />),
 						tabBarItemStyle: styles.itemLeft,

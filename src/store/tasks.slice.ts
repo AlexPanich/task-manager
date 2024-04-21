@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PictureType, Project, pictures } from './projects.slice';
-import { insertTask, selectTasksByProjectId } from '@/DB/dataBase';
+import { insertTask, selectTasksByProjectId, selectTasksNotDone } from '@/DB/dataBase';
 
 export type Task = {
 	id: number;
@@ -66,12 +66,20 @@ export const getTaskByProjectId = createAsyncThunk(
 	},
 );
 
+export const getTasksNotDone = createAsyncThunk('tasks/getNotDone', async () => {
+	const rows = await selectTasksNotDone<TaskDB>();
+	return fromDB(rows);
+});
+
 export const tasksSlice = createSlice({
 	name: 'tasks',
 	initialState,
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(getTaskByProjectId.fulfilled, (state, action) => {
+			state.tasks = action.payload;
+		});
+		builder.addCase(getTasksNotDone.fulfilled, (state, action) => {
 			state.tasks = action.payload;
 		});
 	},
