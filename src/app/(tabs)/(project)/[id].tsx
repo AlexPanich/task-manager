@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
 import { Color, Font, Gap } from '@/shared/tokens';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { RootState, useAppDispatch } from '@/store/store';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,8 @@ import { getProjectById } from '@/store/projects.slice';
 import { getTaskByProjectId } from '@/store/tasks.slice';
 import ProgressBar from '@/shared/ProgressBar/ProgressBar';
 import TaskCard from '@/components/TaskCard/TaskCard';
+import RoundButton from '@/shared/RoundButton/RoundButton';
+import EditBlackIcon from '@/assets/icons/edit-black';
 
 function getCountTaskText(count: number) {
 	const remainer = count % 10;
@@ -23,6 +25,7 @@ function getCountTaskText(count: number) {
 
 export default function Project() {
 	const { id } = useLocalSearchParams();
+	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const isFoucused = useIsFocused();
 	const { project } = useSelector((state: RootState) => state.projects);
@@ -50,6 +53,15 @@ export default function Project() {
 
 	return (
 		<View style={styles.container}>
+			<Stack.Screen
+				options={{
+					headerRight: () => (
+						<RoundButton onPress={() => router.push(`/edit-project/${id}`)}>
+							<EditBlackIcon />
+						</RoundButton>
+					),
+				}}
+			/>
 			<Image source={project.picture.image} style={styles.image} />
 			<Text style={styles.title}>{project.name}</Text>
 			<Text style={styles.countTasks}>{getCountTaskText(tasks.length)}</Text>

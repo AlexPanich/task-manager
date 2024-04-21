@@ -82,7 +82,7 @@ export async function insertProject({
 	const db = getDB();
 	try {
 		await db.transactionAsync(async (tx) => {
-			await tx.executeSqlAsync(`INSERT INTO Projects (picture, name, direction) VALUES (?, ?, ?)`, [
+			await tx.executeSqlAsync(`INSERT INTO projects (picture, name, direction) VALUES (?, ?, ?)`, [
 				picture,
 				name,
 				direction,
@@ -194,4 +194,30 @@ export async function selectTasksByProjectId<T>(projectId: number) {
 		console.log(error);
 	}
 	return rows;
+}
+
+export async function updateProject(
+	id: number,
+	{
+		picture,
+		name,
+		direction,
+	}: {
+		picture: string;
+		name: string;
+		direction: string;
+	},
+) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(
+				`UPDATE projects SET picture = ?, name = ?, direction = ? WHERE id = ?`,
+				[picture, name, direction, id],
+			);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
 }

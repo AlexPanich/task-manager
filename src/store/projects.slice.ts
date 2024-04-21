@@ -3,6 +3,7 @@ import {
 	selectProjects,
 	selectProjectsWithTasksBySearch,
 	selectProjectById,
+	updateProject,
 } from '@/DB/dataBase';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ImageSourcePropType } from 'react-native';
@@ -73,6 +74,17 @@ export const saveProject = createAsyncThunk('projects/save', async (project: Pro
 		direction: project.direction,
 	});
 });
+
+export const editProject = createAsyncThunk(
+	'projects/save',
+	async ({ id, project }: { id: number; project: ProjectBody }) => {
+		await updateProject(id, {
+			picture: project.picture.name,
+			name: project.name,
+			direction: project.direction,
+		});
+	},
+);
 
 export const loadProjects = createAsyncThunk('projects/load', async () => {
 	const rows = await selectProjects<ProjectDB>();

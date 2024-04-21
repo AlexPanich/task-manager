@@ -5,7 +5,6 @@ import { Color, Font } from '@/shared/tokens';
 import RoundButton from '@/shared/RoundButton/RoundButton';
 import PlusBlackIcon from '@/assets/icons/plus-black';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
-import EditBlackIcon from '@/assets/icons/edit-black';
 
 export default function ProjectLayout() {
 	const router = useRouter();
@@ -37,9 +36,15 @@ export default function ProjectLayout() {
 							<ArrowBackIcon />
 						</RoundButton>
 					),
-					headerRight: () => (
-						<RoundButton onPress={() => router.push('/add-project')}>
-							<EditBlackIcon />
+				}}
+			/>
+			<Stack.Screen
+				name="edit-project/[id]"
+				options={{
+					headerTitle: 'Редактировать проект',
+					headerLeft: () => (
+						<RoundButton onPress={() => router.back()}>
+							<ArrowBackIcon />
 						</RoundButton>
 					),
 				}}
