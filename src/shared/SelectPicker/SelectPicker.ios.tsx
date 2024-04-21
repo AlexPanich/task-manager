@@ -23,7 +23,7 @@ export default function SelectPicker<T>({
 	label: string;
 }) {
 	const [showSelect, setShowSelect] = useState(false);
-	const [selectValue, setSelectValue] = useState<T | undefined>(value);
+	const [selectValue, setSelectValue] = useState<T | undefined>(value ?? options[0]);
 
 	const onChangeSelect = (itemValue: string) => {
 		const option = options.find((option) => getValue(option) === itemValue);

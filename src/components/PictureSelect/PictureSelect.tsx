@@ -18,8 +18,6 @@ export default function PictureSelect({
 	const prev = index > 0 ? index - 1 : items.length - 1;
 	const next = index < items.length - 1 ? index + 1 : 0;
 
-	console.log(prev, index, next);
-
 	return (
 		<View style={styles.wrapper}>
 			<RoundButton onPress={() => onSelect(items[prev])}>

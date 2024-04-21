@@ -30,10 +30,7 @@ export default function AddProjectPage() {
 				<PictureSelect
 					items={pictures}
 					value={picture}
-					onSelect={(picture) => {
-						console.log(picture);
-						setPicture(picture);
-					}}
+					onSelect={(picture) => setPicture(picture)}
 				/>
 				<View style={styles.fields}>
 					<Input label="Назваине" value={name} onChangeText={setName} />

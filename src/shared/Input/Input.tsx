@@ -42,6 +42,7 @@ export default function Input({
 					{...props}
 					onFocus={handleFocus}
 					onBlur={handleBlur}
+					autoCapitalize="none"
 				/>
 				{icon && <View style={styles.icon}>{icon}</View>}
 			</View>

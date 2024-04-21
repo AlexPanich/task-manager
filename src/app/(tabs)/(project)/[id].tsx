@@ -1,14 +1,66 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { Color } from '@/shared/tokens';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { Color, Font, Gap } from '@/shared/tokens';
 import { useLocalSearchParams } from 'expo-router';
+import { RootState, useAppDispatch } from '@/store/store';
+import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { getProjectById } from '@/store/projects.slice';
+import { getTaskByProjectId } from '@/store/tasks.slice';
+import ProgressBar from '@/shared/ProgressBar/ProgressBar';
+import TaskCard from '@/components/TaskCard/TaskCard';
+
+function getCountTaskText(count: number) {
+	const remainer = count % 10;
+	if (remainer === 1) {
+		return `${count} задача`;
+	}
+	if (remainer > 1 && remainer < 5) {
+		return `${count} задачи`;
+	}
+	return `${count} задач`;
+}
 
 export default function Project() {
 	const { id } = useLocalSearchParams();
+	const dispatch = useAppDispatch();
+	const isFoucused = useIsFocused();
+	const { project } = useSelector((state: RootState) => state.projects);
+	const { tasks } = useSelector((state: RootState) => state.tasks);
+	const completed = useMemo(() => {
+		return tasks.reduce((sum, task) => {
+			if (task.progress === 100) {
+				sum++;
+			}
+			return sum;
+		}, 0);
+	}, [tasks]);
+
+	useEffect(() => {
+		if (!isFoucused) {
+			return;
+		}
+		dispatch(getProjectById(+id));
+		dispatch(getTaskByProjectId(+id));
+	}, [id, isFoucused]);
+
+	if (!project) {
+		return null;
+	}
 
 	return (
 		<View style={styles.container}>
-			<Text>Project {id}</Text>
+			<Image source={project.picture.image} style={styles.image} />
+			<Text style={styles.title}>{project.name}</Text>
+			<Text style={styles.countTasks}>{getCountTaskText(tasks.length)}</Text>
+			<View style={styles.progressBarWrapper}>
+				<ProgressBar total={tasks.length} completed={completed} />
+			</View>
+			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
+				{tasks.map((task) => (
+					<TaskCard {...task} />
+				))}
+			</ScrollView>
 		</View>
 	);
 }
@@ -17,7 +69,33 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Color.white,
-		justifyContent: 'center',
-		alignItems: 'center',
+		paddingHorizontal: 24,
+		paddingTop: 30,
+	},
+	image: {
+		height: 100,
+		width: 100,
+		alignSelf: 'center',
+		marginBottom: 37,
+	},
+	title: {
+		color: Color.primaryText,
+		fontSize: Font.size.f25,
+		fontFamily: Font.family.semibold,
+		textAlign: 'center',
+		marginBottom: 2,
+	},
+	countTasks: {
+		color: Color.gray,
+		fontSize: Font.size.f14,
+		fontFamily: Font.family.regular,
+		textAlign: 'center',
+		marginBottom: 22,
+	},
+	progressBarWrapper: {
+		marginBottom: 32,
+	},
+	list: {
+		gap: Gap.g19,
 	},
 });

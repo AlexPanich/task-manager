@@ -1,23 +1,37 @@
 import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
-import { Project } from '@/store/projects.slice';
+import { ProjectSearch } from '@/store/projects.slice';
 import { Color, Font, Radius } from '@/shared/tokens';
+import ProgressBar from '@/shared/ProgressBar/ProgressBar';
 
-export default function ProjectCard({ id, name, picture, direction }: Project) {
+export default function ProjectCard({
+	id,
+	name,
+	picture,
+	direction,
+	total,
+	completed,
+}: ProjectSearch) {
+	const projectCompleted = completed === total;
+
 	return (
 		<Link href={`/(tabs)/(project)/${id}`} asChild>
 			<Pressable>
 				<View key={id} style={styles.wrapper}>
 					<View style={styles.header}>
 						<Text style={styles.name}>{name}</Text>
-						<Text style={styles.taskCount}>10/50</Text>
+						<Text
+							style={[styles.taskCount, { color: projectCompleted ? Color.green : Color.primary }]}
+						>
+							{completed}/{total}
+						</Text>
 					</View>
 					<Text style={styles.direction}>{direction}</Text>
 					<View style={styles.body}>
 						<Image source={picture.image} style={styles.image} />
-						<View style={styles.progress}>
-							<View style={styles.bar} />
+						<View style={styles.progressBarWrapper}>
+							<ProgressBar total={total} completed={completed} />
 						</View>
 					</View>
 				</View>
@@ -64,18 +78,9 @@ const styles = StyleSheet.create({
 		borderRadius: Radius.r12,
 		resizeMode: 'cover',
 	},
-	progress: {
-		height: 8,
-		backgroundColor: Color.secondary,
+	progressBarWrapper: {
 		flex: 1,
 		marginRight: 32,
 		marginLeft: 22,
-		borderRadius: Radius.r4,
-	},
-	bar: {
-		width: '20%',
-		height: '100%',
-		borderRadius: Radius.r4,
-		backgroundColor: Color.primary,
 	},
 });

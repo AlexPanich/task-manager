@@ -2,17 +2,16 @@ import SearchIcon from '@/assets/icons/search';
 import ProjectCard from '@/components/ProjectCard/ProjectCard';
 import Input from '@/shared/Input/Input';
 import { Color, Font, Gap } from '@/shared/tokens';
-import { loadProjects } from '@/store/projects.slice';
+import { searchProjects } from '@/store/projects.slice';
 import { RootState, useAppDispatch } from '@/store/store';
-import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
 export default function ProjectsPage() {
 	const [search, setSearch] = useState<string>('');
-	const { projects } = useSelector((state: RootState) => state.projects);
+	const { search: projects } = useSelector((state: RootState) => state.projects);
 	const dispatch = useAppDispatch();
 	const isFoucused = useIsFocused();
 
@@ -20,7 +19,7 @@ export default function ProjectsPage() {
 		if (!isFoucused) {
 			return;
 		}
-		dispatch(loadProjects(search));
+		dispatch(searchProjects(search));
 	}, [search, isFoucused]);
 
 	return (
@@ -39,9 +38,6 @@ export default function ProjectsPage() {
 					<ProjectCard key={project.id} {...project} />
 				))}
 			</ScrollView>
-			<Link href={`/(tabs)/(project)/1`}>
-				<Text>на 1</Text>
-			</Link>
 		</View>
 	);
 }
@@ -51,7 +47,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: Color.white,
 		paddingHorizontal: 24,
-		paddingVertical: 30,
+		paddingTop: 30,
 	},
 	searchWrapper: {
 		marginBottom: 30,

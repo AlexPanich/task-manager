@@ -1,4 +1,9 @@
-import { insert, select } from '@/DB/dataBase';
+import {
+	insertProject,
+	selectProjects,
+	selectProjectsWithTasksBySearch,
+	selectProjectById,
+} from '@/DB/dataBase';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ImageSourcePropType } from 'react-native';
 
@@ -28,6 +33,11 @@ type ProjectDB = {
 	direction: string;
 };
 
+type TaskInfo = { total: number; completed: number };
+
+export type ProjectSearch = Project & TaskInfo;
+type ProjectSearchDB = ProjectDB & TaskInfo;
+
 function mapFromDB(rows: ProjectDB[]): Project[] {
 	return rows.map((r) => ({
 		id: r.id,
@@ -37,31 +47,46 @@ function mapFromDB(rows: ProjectDB[]): Project[] {
 	}));
 }
 
-export type ProjectsState = { projects: Project[] };
+function mapFromDBwithTaskInfo(rows: ProjectSearchDB[]): ProjectSearch[] {
+	return rows.map((r) => ({
+		id: r.id,
+		picture: pictures.find((c) => c.name === r.picture) || pictures[0],
+		name: r.name,
+		direction: r.direction,
+		total: r.total,
+		completed: r.completed,
+	}));
+}
 
-const initialState: ProjectsState = { projects: [] };
+export type ProjectsState = {
+	projects: Project[];
+	search: ProjectSearch[];
+	project: Project | null;
+};
+
+const initialState: ProjectsState = { projects: [], search: [], project: null };
 
 export const saveProject = createAsyncThunk('projects/save', async (project: ProjectBody) => {
-	await insert('Projects', {
-		pictures: project.picture.name,
+	await insertProject({
+		picture: project.picture.name,
 		name: project.name,
 		direction: project.direction,
 	});
 });
 
-export const loadProjects = createAsyncThunk('projects/load', async (search: string) => {
-	const table = 'Projects';
-	const where = search
-		? [
-				{ column: 'name', op: 'LIKE', value: search },
-				{ column: 'direction', op: 'LIKE', value: search },
-			]
-		: undefined;
-	const orderBy = { id: 'ASC' } as const;
-
-	const rows = await select<ProjectDB>(table, undefined, where, orderBy);
-
+export const loadProjects = createAsyncThunk('projects/load', async () => {
+	const rows = await selectProjects<ProjectDB>();
 	return mapFromDB(rows);
+});
+
+export const searchProjects = createAsyncThunk('projects/search', async (search: string) => {
+	const rows = await selectProjectsWithTasksBySearch<ProjectSearchDB>(search.trim());
+	return mapFromDBwithTaskInfo(rows);
+});
+
+export const getProjectById = createAsyncThunk('projects/getById', async (id: number) => {
+	const rows = await selectProjectById<ProjectDB>(id);
+	return mapFromDB(rows)[0];
 });
 
 export const projectsSlice = createSlice({
@@ -70,9 +95,13 @@ export const projectsSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(loadProjects.fulfilled, (state, action) => {
-			if (action.payload) {
-				state.projects = action.payload;
-			}
+			state.projects = action.payload;
+		});
+		builder.addCase(searchProjects.fulfilled, (state, action) => {
+			state.search = action.payload;
+		});
+		builder.addCase(getProjectById.fulfilled, (state, action) => {
+			state.project = action.payload;
 		});
 	},
 });

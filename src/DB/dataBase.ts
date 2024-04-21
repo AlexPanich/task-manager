@@ -11,13 +11,23 @@ async function createDatabase() {
 
 	await db.transactionAsync(async (tx) => {
 		await tx.executeSqlAsync(`
-				CREATE TABLE IF NOT EXISTS Projects 
+				CREATE TABLE IF NOT EXISTS projects (
+					  id INTEGER PRIMARY KEY AUTOINCREMENT,
+					  picture VARCHAR(50) NOT NULL CHECK (picture IN ('Home', 'Work', 'Creation', 'Default')),
+					  name VARCHAR(50) NOT NULL,
+					  direction VARCHAR(50) NOT NULL
+				)
+			`);
+		await tx.executeSqlAsync(`
+				CREATE TABLE IF NOT EXISTS tasks 
 				(
 					  id INTEGER PRIMARY KEY AUTOINCREMENT,
-					  picture TEXT NOT NULL CHECK (picture IN ('Home', 'Work', 'Creation', 'Default')),
-					  name TEXT NOT NULL,
-					  direction TEXT NOT NULL,
-					  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+					  name VARCHAR(50) NOT NULL,
+					  date DATE NOT NULL,
+					  project_id INTEGER NOT NULL,
+					  progress INTEGER NOT NULL CHECK (progress >=0 AND progress <= 100),
+					  description TEXT,
+					  FOREIGN KEY (project_id) REFERENCES Projects(id) ON DELETE CASCADE
 				)
 			`);
 	});
@@ -60,42 +70,124 @@ export function getDB() {
 	return db;
 }
 
-export async function insert(table: string, values: Record<string, string | number>) {
+export async function insertProject({
+	picture,
+	name,
+	direction,
+}: {
+	picture: string;
+	name: string;
+	direction: string;
+}) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`INSERT INTO Projects (picture, name, direction) VALUES (?, ?, ?)`, [
+				picture,
+				name,
+				direction,
+			]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+export async function insertTask({
+	name,
+	date,
+	project_id,
+	description,
+	progress,
+}: {
+	name: string;
+	date: string;
+	project_id: number;
+	description: string;
+	progress: number;
+}) {
 	const db = getDB();
 	try {
 		await db.transactionAsync(async (tx) => {
 			await tx.executeSqlAsync(
-				`INSERT INTO ${table} (${Object.keys(values).join(', ')}) VALUES (?, ?, ?)`,
-				Object.values(values),
+				`INSERT INTO tasks (name, date, project_id, description, progress) VALUES (?, ?, ?, ?, ?)`,
+				[name, date, project_id, description, progress],
 			);
 		});
 	} catch (error) {
 		console.log(error);
 	}
 }
-
-export async function select<T>(
-	table: string,
-	columns?: string[],
-	where?: { column: string; op: string; value: string }[],
-	orderBy?: Record<string, 'ASC' | 'DESC'>,
-) {
+export async function selectProjects<T>() {
+	const db = getDB();
 	let rows: T[] = [];
-	const sqlSelect = `SELECT ${columns ? columns.join(', ') : '*'} FROM ${table}`;
-	const sqlWhere = where
-		? 'WHERE ' + where.map((w) => `${w.column} ${w.op} '%${w.value}%'`).join(' OR ')
-		: '';
-	const sqlOrderBy = orderBy
-		? 'ORDER BY ' +
-			Object.entries(orderBy)
-				.map(([k, v]) => `${k} ${v}`)
-				.join(', ')
-		: '';
-	const sql = [sqlSelect, sqlWhere, sqlOrderBy].filter(Boolean).join(' ');
-
 	try {
 		await db.transactionAsync(async (tx) => {
-			const result = await tx.executeSqlAsync(sql, []);
+			const result = await tx.executeSqlAsync(`SELECT * FROM projects ORDER BY id`, []);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+export async function selectProjectsWithTasksBySearch<T>(search: string) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT p.*, COUNT(t.id) AS [total], COUNT(t2.id) AS [completed]
+					FROM projects AS p
+					LEFT JOIN tasks AS t
+					ON p.id = t.project_id 
+					LEFT JOIN tasks AS t2
+					ON p.id = t2.project_id AND t.progress = 100 AND t.id = t2.id
+					WHERE p.name LIKE '%${search}%'
+					OR p.direction LIKE '%${search}%'
+					GROUP BY p.id
+					ORDER BY p.id DESC
+				`,
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
+export async function selectProjectById<T>(id: number) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(`SELECT * FROM projects WHERE projects.id = ?`, [id]);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
+export async function selectTasksByProjectId<T>(projectId: number) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.project_id = ?
+					ORDER BY t.date DESC
+				`,
+				[projectId],
+			);
 			rows = result.rows as T[];
 		}, true);
 	} catch (error) {

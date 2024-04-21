@@ -9,6 +9,7 @@ import { RootState, useAppDispatch } from '@/store/store';
 import { Project, loadProjects } from '@/store/projects.slice';
 import DatePicker from '@/shared/DatePicker/DatePicker';
 import SelectPicker from '@/shared/SelectPicker/SelectPicker';
+import { TaskBody, formatDate, saveTask } from '@/store/tasks.slice';
 
 export default function AddTaskPage() {
 	const insets = useSafeAreaInsets();
@@ -19,11 +20,20 @@ export default function AddTaskPage() {
 	const [name, setName] = useState<string>('');
 	const [date, setDate] = useState<Date>(new Date());
 	const [project, setProject] = useState<Project | undefined>(undefined);
-	const [desription, setDescription] = useState<string>('');
+	const [description, setDescription] = useState<string>('');
 
 	useEffect(() => {
-		dispatch(loadProjects(''));
+		dispatch(loadProjects());
 	}, []);
+
+	const addTask = () => {
+		if (!name || !date || !project) {
+			return;
+		}
+		const task: TaskBody = { name, date: formatDate(date), project, description };
+
+		dispatch(saveTask(task));
+	};
 
 	return (
 		<View style={styles.container}>
@@ -49,13 +59,13 @@ export default function AddTaskPage() {
 					style={styles.textArea}
 					numberOfLines={7}
 					textAlignVertical="top"
-					value={desription}
+					value={description}
 					onChangeText={setDescription}
 				/>
 			</KeyboardAvoidingView>
 			<Button
 				style={[styles.button, { bottom: insets.bottom + 30 }]}
-				onPress={() => ({})}
+				onPress={addTask}
 				title="Сохранить"
 			/>
 		</View>
