@@ -219,6 +219,30 @@ export async function selectTasksNotDone<T>() {
 	return rows;
 }
 
+export async function selectTasksByDate<T>(date: string) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.date = ?
+					ORDER BY t.date DESC
+				`,
+				[date],
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
 export async function updateProject(
 	id: number,
 	{

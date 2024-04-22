@@ -95,6 +95,7 @@ export default function TabsLayout() {
 	return (
 		<>
 			<Tabs
+				id="MyTabs"
 				screenOptions={{
 					headerShown: false,
 					tabBarStyle: { height: insets.bottom + 82, borderTopWidth: 0, elevation: 0 },

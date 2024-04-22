@@ -48,7 +48,7 @@ export default function HomePage() {
 
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.taskList}>
 				{tasks.map((task) => (
-					<TaskCard {...task} />
+					<TaskCard key={task.id} {...task} />
 				))}
 			</ScrollView>
 		</View>

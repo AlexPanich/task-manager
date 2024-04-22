@@ -1,7 +1,10 @@
 import React from 'react';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StyleSheet, Text } from 'react-native';
 import { Color, Font } from '@/shared/tokens';
+import PlusBlackIcon from '@/assets/icons/plus-black';
+import RoundButton from '@/shared/RoundButton/RoundButton';
+import ArrowBackIcon from '@/assets/icons/arrow-back';
 
 function getCurrentDate() {
 	const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
@@ -10,6 +13,8 @@ function getCurrentDate() {
 }
 
 export default function ProjectLayout() {
+	const router = useRouter();
+
 	return (
 		<Stack
 			screenOptions={{
@@ -28,6 +33,16 @@ export default function ProjectLayout() {
 				name="tasks"
 				options={{
 					headerTitle: 'Задачи',
+					headerLeft: () => (
+						<RoundButton onPress={() => router.back()}>
+							<ArrowBackIcon />
+						</RoundButton>
+					),
+					headerRight: () => (
+						<RoundButton onPress={() => router.push('/add-task')}>
+							<PlusBlackIcon />
+						</RoundButton>
+					),
 				}}
 			/>
 		</Stack>
