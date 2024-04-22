@@ -29,7 +29,8 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-redux": "^9.1.1",
-    "@react-native-community/slider": "4.4.2"
+    "@react-native-community/slider": "4.4.2",
+    "expo-local-authentication": "~13.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

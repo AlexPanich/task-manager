@@ -60,7 +60,7 @@ export default function useLoadDB() {
 			.catch((err) => setError(`Ошибка подключения к базе данных: ${err.message}`));
 	}, []);
 
-	return [loaded, error];
+	return [loaded, error] as const;
 }
 
 export function getDB() {
