@@ -243,6 +243,30 @@ export async function selectTasksByDate<T>(date: string) {
 	return rows;
 }
 
+export async function selectTaskById<T>(id: number) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.id = ?
+					ORDER BY t.date DESC
+				`,
+				[id],
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
 export async function updateProject(
 	id: number,
 	{
@@ -262,6 +286,18 @@ export async function updateProject(
 				`UPDATE projects SET picture = ?, name = ?, direction = ? WHERE id = ?`,
 				[picture, name, direction, id],
 			);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function updateTaskProgress(id: number, progress: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`UPDATE tasks SET progress = ? WHERE id = ?`, [progress, id]);
 		});
 		return null;
 	} catch (error) {

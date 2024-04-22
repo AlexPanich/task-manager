@@ -12,7 +12,7 @@ function getCurrentDate() {
 	return `${days[date.getDay()]}, ${date.getDate()}`;
 }
 
-export default function ProjectLayout() {
+export default function TasksLayout() {
 	const router = useRouter();
 
 	return (
@@ -41,6 +41,17 @@ export default function ProjectLayout() {
 					headerRight: () => (
 						<RoundButton onPress={() => router.push('/add-task')}>
 							<PlusBlackIcon />
+						</RoundButton>
+					),
+				}}
+			/>
+			<Stack.Screen
+				name="[id]"
+				options={{
+					headerTitle: 'Задача',
+					headerLeft: () => (
+						<RoundButton onPress={() => router.back()}>
+							<ArrowBackIcon />
 						</RoundButton>
 					),
 				}}

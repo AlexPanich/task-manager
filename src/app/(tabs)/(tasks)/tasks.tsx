@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { formatDate, getTasksByDate } from '@/store/tasks.slice';
 import TaskCard from '@/components/TaskCard/TaskCard';
+import { getCountTaskText } from '@/shared/functions';
 
 function formatDateMonthSelector(date: Date) {
 	let month: number | string = date.getMonth() + 1;
@@ -22,6 +23,7 @@ export default function TasksPage() {
 	const [date, setDate] = useState(new Date());
 	const countDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 	const currentDay = date.getDate();
+	const isToday = new Date().toDateString() === date.toDateString();
 
 	const { tasks } = useSelector((state: RootState) => state.tasks);
 	const dispatch = useAppDispatch();
@@ -61,7 +63,9 @@ export default function TasksPage() {
 				</Pressable>
 				<View style={styles.monthSelectorBody}>
 					<Text style={styles.monthSelectorDate}>{formatDateMonthSelector(date)}</Text>
-					<Text style={styles.monthSelectorText}>2 задачи на сегодя</Text>
+					<Text style={styles.monthSelectorText}>
+						{getCountTaskText(tasks.length)} на {isToday ? 'сегодня' : date.toLocaleDateString()}
+					</Text>
 				</View>
 				<Pressable style={styles.monthSelectorBtn} onPress={plusMonth}>
 					<ArrowForwardWhiteIcon />

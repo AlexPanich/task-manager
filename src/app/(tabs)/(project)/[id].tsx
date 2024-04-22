@@ -11,17 +11,7 @@ import ProgressBar from '@/shared/ProgressBar/ProgressBar';
 import TaskCard from '@/components/TaskCard/TaskCard';
 import RoundButton from '@/shared/RoundButton/RoundButton';
 import EditBlackIcon from '@/assets/icons/edit-black';
-
-function getCountTaskText(count: number) {
-	const remainer = count % 10;
-	if (remainer === 1) {
-		return `${count} задача`;
-	}
-	if (remainer > 1 && remainer < 5) {
-		return `${count} задачи`;
-	}
-	return `${count} задач`;
-}
+import { getCountTaskText } from '@/shared/functions';
 
 export default function Project() {
 	const { id } = useLocalSearchParams();

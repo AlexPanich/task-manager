@@ -2,9 +2,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PictureType, Project, pictures } from './projects.slice';
 import {
 	insertTask,
+	selectTaskById,
 	selectTasksByDate,
 	selectTasksByProjectId,
 	selectTasksNotDone,
+	updateTaskProgress,
 } from '@/DB/dataBase';
 
 export type Task = {
@@ -30,9 +32,9 @@ type TaskDB = {
 
 export type TaskBody = Omit<Task, 'id' | 'progress'>;
 
-export type TasksState = { tasks: Task[] };
+export type TasksState = { tasks: Task[]; task: Task | null };
 
-const initialState: TasksState = { tasks: [] };
+const initialState: TasksState = { tasks: [], task: null };
 
 const fromDB = (rows: TaskDB[]): Task[] => {
 	return rows.map((r) => ({
@@ -81,6 +83,18 @@ export const getTasksByDate = createAsyncThunk('tasks/getByDate', async (date: s
 	return fromDB(rows);
 });
 
+export const getTaskById = createAsyncThunk('tasks/getById', async (id: number) => {
+	const rows = await selectTaskById<TaskDB>(id);
+	return fromDB(rows)[0];
+});
+
+export const setTaskProgress = createAsyncThunk(
+	'tasks/setProgress',
+	async ({ id, progress }: { id: number; progress: number }) => {
+		await updateTaskProgress(id, progress);
+	},
+);
+
 export const tasksSlice = createSlice({
 	name: 'tasks',
 	initialState,
@@ -94,6 +108,9 @@ export const tasksSlice = createSlice({
 		});
 		builder.addCase(getTasksByDate.fulfilled, (state, action) => {
 			state.tasks = action.payload;
+		});
+		builder.addCase(getTaskById.fulfilled, (state, action) => {
+			state.task = action.payload;
 		});
 	},
 });

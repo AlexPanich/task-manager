@@ -1,20 +1,31 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Task } from '@/store/tasks.slice';
 import { Color, Font, Gap, Radius } from '@/shared/tokens';
+import { Link } from 'expo-router';
 
-export default function TaskCard({ project: { name: projectName }, name, date, progress }: Task) {
+export default function TaskCard({
+	project: { name: projectName },
+	name,
+	date,
+	progress,
+	id,
+}: Task) {
 	return (
-		<View style={styles.wrapper}>
-			<View style={styles.info}>
-				<Text style={styles.projectName}>{projectName}</Text>
-				<Text style={styles.name}>{name}</Text>
-				<Text style={styles.date}>{new Date(date).toLocaleDateString()}</Text>
-			</View>
-			<View>
-				<Text style={styles.progressText}>{progress}%</Text>
-			</View>
-		</View>
+		<Link href={`/(tabs)/(tasks)/${id}`} asChild>
+			<Pressable>
+				<View style={styles.wrapper}>
+					<View style={styles.info}>
+						<Text style={styles.projectName}>{projectName}</Text>
+						<Text style={styles.name}>{name}</Text>
+						<Text style={styles.date}>{new Date(date).toLocaleDateString()}</Text>
+					</View>
+					<View>
+						<Text style={styles.progressText}>{progress}%</Text>
+					</View>
+				</View>
+			</Pressable>
+		</Link>
 	);
 }
 
