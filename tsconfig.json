@@ -5,7 +5,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+     "moduleSuffixes": [
+      ".ios",
+      ".android",
+      ".native",
+      ""
+    ]
   },
   "include": [
     "**/*.ts",

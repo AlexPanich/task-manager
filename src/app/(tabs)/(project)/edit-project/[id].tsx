@@ -2,27 +2,52 @@ import Button from '@/shared/Button/Button';
 import PictureSelect from '@/components/PictureSelect/PictureSelect';
 import Input from '@/shared/Input/Input';
 import { Color, Gap } from '@/shared/tokens';
-import { ProjectBody, pictures, saveProject } from '@/store/projects.slice';
-import { useAppDispatch } from '@/store/store';
-import { useState } from 'react';
+import { ProjectBody, editProject, getProjectById, pictures } from '@/store/projects.slice';
+import { RootState, useAppDispatch } from '@/store/store';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
-export default function AddProjectPage() {
+export default function EditProjectPage() {
+	const { id } = useLocalSearchParams();
 	const [picture, setPicture] = useState(pictures[0]);
 	const [name, setName] = useState<string>('');
 	const [direction, setDirection] = useState<string>('');
 	const insets = useSafeAreaInsets();
 	const dispatch = useAppDispatch();
+	const { project } = useSelector((state: RootState) => state.projects);
+	const isFoucused = useIsFocused();
 
-	const addProject = () => {
+	useEffect(() => {
+		if (!isFoucused) {
+			return;
+		}
+		dispatch(getProjectById(+id));
+	}, [id, isFoucused]);
+
+	useEffect(() => {
+		if (!project) return;
+
+		setPicture(project.picture);
+		setName(project.name);
+		setDirection(project.direction);
+	}, [project]);
+
+	const update = () => {
 		if (!name || !direction) {
 			return;
 		}
 		const project: ProjectBody = { picture, name, direction };
 
-		dispatch(saveProject(project));
+		dispatch(editProject({ id: +id, project }));
 	};
+
+	if (!project) {
+		return null;
+	}
 
 	return (
 		<View style={styles.container}>
@@ -39,7 +64,7 @@ export default function AddProjectPage() {
 			</View>
 			<Button
 				style={[styles.button, { marginBottom: insets.bottom }]}
-				onPress={addProject}
+				onPress={update}
 				title="Сохранить"
 			/>
 		</View>
