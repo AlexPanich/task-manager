@@ -57,6 +57,17 @@ export default function TasksLayout() {
 					),
 				}}
 			/>
+			<Stack.Screen
+				name="edit/[taskId]"
+				options={{
+					headerTitle: 'Редактирование задачи',
+					headerLeft: () => (
+						<RoundButton onPress={() => router.back()}>
+							<ArrowBackIcon />
+						</RoundButton>
+					),
+				}}
+			/>
 		</Stack>
 	);
 }

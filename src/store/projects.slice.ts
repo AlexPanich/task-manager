@@ -76,7 +76,7 @@ export const saveProject = createAsyncThunk('projects/save', async (project: Pro
 });
 
 export const editProject = createAsyncThunk(
-	'projects/save',
+	'projects/edit',
 	async ({ id, project }: { id: number; project: ProjectBody }) => {
 		await updateProject(id, {
 			picture: project.picture.name,

@@ -304,3 +304,31 @@ export async function updateTaskProgress(id: number, progress: number) {
 		return error;
 	}
 }
+
+export async function updateTask(
+	id: number,
+	{
+		name,
+		date,
+		description,
+		project_id,
+	}: {
+		name: string;
+		date: string;
+		description: string;
+		project_id: number;
+	},
+) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(
+				`UPDATE tasks SET name = ?, date = ?, description = ?, project_id = ? WHERE id = ?`,
+				[name, date, description, project_id, id],
+			);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}

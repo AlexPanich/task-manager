@@ -6,6 +6,7 @@ import {
 	selectTasksByDate,
 	selectTasksByProjectId,
 	selectTasksNotDone,
+	updateTask,
 	updateTaskProgress,
 } from '@/DB/dataBase';
 
@@ -92,6 +93,18 @@ export const setTaskProgress = createAsyncThunk(
 	'tasks/setProgress',
 	async ({ id, progress }: { id: number; progress: number }) => {
 		await updateTaskProgress(id, progress);
+	},
+);
+
+export const editTask = createAsyncThunk(
+	'tasks/edit',
+	async ({ id, task }: { id: number; task: TaskBody }) => {
+		await updateTask(id, {
+			name: task.name,
+			date: task.date,
+			project_id: task.project.id,
+			description: task.description,
+		});
 	},
 );
 
