@@ -3,6 +3,7 @@ import React from 'react';
 import { Task } from '@/store/tasks.slice';
 import { Color, Font, Gap, Radius } from '@/shared/tokens';
 import { Link } from 'expo-router';
+import CircleProgress from './CircleProgress';
 
 export default function TaskCard({
 	project: { name: projectName },
@@ -21,7 +22,7 @@ export default function TaskCard({
 						<Text style={styles.date}>{new Date(date).toLocaleDateString()}</Text>
 					</View>
 					<View>
-						<Text style={styles.progressText}>{progress}%</Text>
+						<CircleProgress progress={progress} />
 					</View>
 				</View>
 			</Pressable>
@@ -57,10 +58,5 @@ const styles = StyleSheet.create({
 		color: Color.gray,
 		fontSize: Font.size.f12,
 		fontFamily: Font.family.regular,
-	},
-	progressText: {
-		color: Color.primaryText,
-		fontSize: Font.size.f12,
-		fontFamily: Font.family.medium,
 	},
 });
