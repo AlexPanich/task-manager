@@ -20,6 +20,7 @@ export default function TasksLayout() {
 			screenOptions={{
 				headerShadowVisible: false,
 				headerTitleStyle: styles.headerTitle,
+				headerTitleAlign: 'center',
 			}}
 		>
 			<Stack.Screen
@@ -46,7 +47,7 @@ export default function TasksLayout() {
 				}}
 			/>
 			<Stack.Screen
-				name="[id]"
+				name="[taskId]"
 				options={{
 					headerTitle: 'Задача',
 					headerLeft: () => (

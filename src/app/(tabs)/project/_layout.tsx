@@ -14,6 +14,7 @@ export default function ProjectLayout() {
 			screenOptions={{
 				headerShadowVisible: false,
 				headerTitleStyle: styles.headerTitle,
+				headerTitleAlign: 'center',
 			}}
 		>
 			<Stack.Screen
@@ -28,7 +29,7 @@ export default function ProjectLayout() {
 				}}
 			/>
 			<Stack.Screen
-				name="[id]"
+				name="[projectId]"
 				options={{
 					headerTitle: 'Проект',
 					headerLeft: () => (

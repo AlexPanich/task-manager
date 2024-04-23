@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
 import { Color, Font, Gap } from '@/shared/tokens';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -14,7 +14,7 @@ import EditBlackIcon from '@/assets/icons/edit-black';
 import { getCountTaskText } from '@/shared/functions';
 
 export default function Project() {
-	const { id } = useLocalSearchParams();
+	const { projectId: id } = useLocalSearchParams();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const isFoucused = useIsFocused();
@@ -34,7 +34,13 @@ export default function Project() {
 			return;
 		}
 		dispatch(getProjectById(+id));
-		dispatch(getTaskByProjectId(+id));
+		if (Platform.OS === 'android') {
+			setTimeout(() => {
+				dispatch(getTaskByProjectId(+id));
+			}, 1000);
+		} else {
+			dispatch(getTaskByProjectId(+id));
+		}
 	}, [id, isFoucused]);
 
 	if (!project) {

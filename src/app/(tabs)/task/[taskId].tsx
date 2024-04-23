@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { getTaskById, setTaskProgress } from '@/store/tasks.slice';
 
 export default function TaskPage() {
-	const { id } = useLocalSearchParams();
+	const { taskId: id } = useLocalSearchParams();
 	const router = useRouter();
 
 	const dispatch = useAppDispatch();
