@@ -17,7 +17,7 @@ export default function ProjectLayout() {
 			}}
 		>
 			<Stack.Screen
-				name="projects"
+				name="index"
 				options={{
 					headerTitle: 'Проекты',
 					headerRight: () => (

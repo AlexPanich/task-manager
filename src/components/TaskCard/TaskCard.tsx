@@ -12,7 +12,7 @@ export default function TaskCard({
 	id,
 }: Task) {
 	return (
-		<Link href={`/(tabs)/(tasks)/${id}`} asChild>
+		<Link href={`/(tabs)/task/${id}`} asChild>
 			<Pressable>
 				<View style={styles.wrapper}>
 					<View style={styles.info}>

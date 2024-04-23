@@ -46,7 +46,7 @@ async function loadDatabase() {
 	} else {
 		db = SQLite.openDatabase(dbName);
 		console.log('База данных загружена');
-		// FileSystem.deleteAsync(dbFilePath);
+		// FileSystem.deleteAsync(dbFilePath).then(() => console.log('База данных удалена'));
 	}
 }
 

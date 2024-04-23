@@ -41,7 +41,7 @@ export default function HomePage() {
 			</View>
 			<View style={styles.tasksHeader}>
 				<Text style={styles.tasksTite}>Задачи</Text>
-				<Link href="/tasks">
+				<Link href="/(tabs)/task">
 					<ArrosForwardBlueIcon />
 				</Link>
 			</View>

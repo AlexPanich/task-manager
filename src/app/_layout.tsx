@@ -27,7 +27,7 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if ((fontsLoaded || fontError) && (dbLoaded || dbError) && auth) {
+		if ((fontsLoaded || fontError) && (dbLoaded || dbError)) {
 			SplashScreen.hideAsync();
 		}
 	}, [fontsLoaded, fontError, dbLoaded, dbError, auth]);
@@ -46,7 +46,7 @@ export default function RootLayout() {
 		}
 	}, [authError, dbError, fontError]);
 
-	if (!fontsLoaded || fontError || !dbLoaded || dbError || !auth) {
+	if (!fontsLoaded || fontError || !dbLoaded || dbError) {
 		return null;
 	}
 

@@ -45,7 +45,7 @@ export default function TaskPage() {
 			<Stack.Screen
 				options={{
 					headerRight: () => (
-						<RoundButton onPress={() => router.push(`/home`)}>
+						<RoundButton onPress={() => router.push(`/(tabs)/task/home`)}>
 							<EditBlackIcon />
 						</RoundButton>
 					),

@@ -102,14 +102,14 @@ export default function TabsLayout() {
 				}}
 			>
 				<Tabs.Screen
-					name="(tasks)"
+					name="task"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <HomeActiveIcon /> : <HomeIcon />),
 						tabBarItemStyle: styles.itemLeft,
 					}}
 				/>
 				<Tabs.Screen
-					name="(project)"
+					name="project"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <FolderActiveIcon /> : <FolderIcon />),
 						tabBarItemStyle: styles.itemRight,

@@ -31,7 +31,7 @@ export default function CreateAccountPage() {
 				<Input placeholder="Ваше имя" value={name} onChangeText={setName} />
 				<Input placeholder="Ваша фамилия" value={surname} onChangeText={setSurname} />
 			</View>
-			<Button title="Начать" onPress={() => router.push('/(tabs)/home')} />
+			<Button title="Начать" onPress={() => router.push('/(tabs)/task/home')} />
 		</View>
 	);
 }

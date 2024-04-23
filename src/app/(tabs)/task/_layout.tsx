@@ -30,7 +30,7 @@ export default function TasksLayout() {
 				}}
 			/>
 			<Stack.Screen
-				name="tasks"
+				name="index"
 				options={{
 					headerTitle: 'Задачи',
 					headerLeft: () => (

@@ -46,7 +46,7 @@ export default function Project() {
 			<Stack.Screen
 				options={{
 					headerRight: () => (
-						<RoundButton onPress={() => router.push(`/edit-project/${id}`)}>
+						<RoundButton onPress={() => router.push(`/project/edit-project/${id}`)}>
 							<EditBlackIcon />
 						</RoundButton>
 					),

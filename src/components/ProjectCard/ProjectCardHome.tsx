@@ -16,7 +16,7 @@ export default function ProjectCard({
 	const projectCompleted = completed === total;
 
 	return (
-		<Link href={`/(tabs)/(project)/${id}`} asChild>
+		<Link href={`/(tabs)/project/${id}`} asChild>
 			<Pressable>
 				<View key={id} style={styles.wrapper}>
 					<View style={styles.header}>
