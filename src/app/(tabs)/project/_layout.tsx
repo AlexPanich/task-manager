@@ -26,6 +26,7 @@ export default function ProjectLayout() {
 							<PlusBlackIcon />
 						</RoundButton>
 					),
+					headerLeft: () => '',
 				}}
 			/>
 			<Stack.Screen
