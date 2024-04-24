@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import ArrosForwardBlueIcon from '@/assets/icons/arrow-forward-blue';
 import { Link } from 'expo-router';
 import TaskCard from '@/components/TaskCard/TaskCard';
-import { getTasksNotDone } from '@/store/tasks.slice';
+import { getTasksNotDone, removeTask } from '@/store/tasks.slice';
 
 export default function HomePage() {
 	const { search: projects } = useSelector((state: RootState) => state.projects);
@@ -30,6 +30,10 @@ export default function HomePage() {
 			dispatch(getTasksNotDone());
 		}
 	}, [isFoucused]);
+
+	const deleteTask = (id: number) => {
+		dispatch(removeTask(id));
+	};
 
 	return (
 		<View style={styles.container}>
@@ -54,7 +58,7 @@ export default function HomePage() {
 
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.taskList}>
 				{tasks.map((task) => (
-					<TaskCard key={task.id} {...task} />
+					<TaskCard key={task.id} task={task} onDelete={deleteTask} />
 				))}
 			</ScrollView>
 		</View>

@@ -332,3 +332,27 @@ export async function updateTask(
 		return error;
 	}
 }
+
+export async function deleteTask(id: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`DELETE FROM tasks WHERE id = ?`, [id]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function deleteProject(id: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`DELETE FROM projects WHERE id = ?`, [id]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}

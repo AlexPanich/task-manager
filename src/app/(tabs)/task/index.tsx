@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-import { formatDate, getTasksByDate } from '@/store/tasks.slice';
+import { formatDate, getTasksByDate, removeTask } from '@/store/tasks.slice';
 import TaskCard from '@/components/TaskCard/TaskCard';
 import { getCountTaskText } from '@/shared/functions';
 
@@ -53,6 +53,10 @@ export default function TasksPage() {
 		const newDate = new Date(date);
 		newDate.setDate(day);
 		setDate(newDate);
+	};
+
+	const deleteTask = (id: number) => {
+		dispatch(removeTask(id));
 	};
 
 	return (
@@ -110,7 +114,7 @@ export default function TasksPage() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.taskList}>
 				{tasks.map((task) => (
-					<TaskCard key={task.id} {...task} />
+					<TaskCard key={task.id} task={task} onDelete={deleteTask} />
 				))}
 			</ScrollView>
 		</View>

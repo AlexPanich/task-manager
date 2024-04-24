@@ -6,7 +6,7 @@ import { RootState, useAppDispatch } from '@/store/store';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { getProjectById } from '@/store/projects.slice';
-import { getTaskByProjectId } from '@/store/tasks.slice';
+import { getTaskByProjectId, removeTask } from '@/store/tasks.slice';
 import ProgressBar from '@/shared/ProgressBar/ProgressBar';
 import TaskCard from '@/components/TaskCard/TaskCard';
 import RoundButton from '@/shared/RoundButton/RoundButton';
@@ -43,6 +43,10 @@ export default function Project() {
 		}
 	}, [id, isFoucused]);
 
+	const deleteTask = (id: number) => {
+		dispatch(removeTask(id));
+	};
+
 	if (!project) {
 		return null;
 	}
@@ -66,7 +70,7 @@ export default function Project() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
 				{tasks.map((task) => (
-					<TaskCard key={task.id} {...task} />
+					<TaskCard key={task.id} task={task} onDelete={deleteTask} />
 				))}
 			</ScrollView>
 		</View>

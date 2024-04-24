@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PictureType, Project, pictures } from './projects.slice';
 import {
+	deleteTask,
 	insertTask,
 	selectTaskById,
 	selectTasksByDate,
@@ -108,6 +109,11 @@ export const editTask = createAsyncThunk(
 	},
 );
 
+export const removeTask = createAsyncThunk('tasks/delete', async (id: number) => {
+	await deleteTask(id);
+	return id;
+});
+
 export const tasksSlice = createSlice({
 	name: 'tasks',
 	initialState,
@@ -124,6 +130,9 @@ export const tasksSlice = createSlice({
 		});
 		builder.addCase(getTaskById.fulfilled, (state, action) => {
 			state.task = action.payload;
+		});
+		builder.addCase(removeTask.fulfilled, (state, action) => {
+			state.tasks.filter((task) => task.id !== action.payload);
 		});
 	},
 });

@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
 	fields: {
 		alignSelf: 'stretch',
 		gap: Gap.g16,
-		marginTop: 40,
 		marginBottom: 'auto',
 	},
 	iosPosition: {
@@ -103,7 +102,6 @@ const styles = StyleSheet.create({
 	button: {
 		width: 220,
 		alignSelf: 'center',
-		position: 'absolute',
 	},
 	textArea: {
 		height: 146,

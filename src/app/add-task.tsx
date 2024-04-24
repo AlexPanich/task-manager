@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
 	fields: {
 		alignSelf: 'stretch',
 		gap: Gap.g16,
-		marginTop: 40,
 		marginBottom: 'auto',
 	},
 	iosPosition: {
