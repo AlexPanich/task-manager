@@ -2,17 +2,13 @@ import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
 import { ProjectSearch } from '@/store/projects.slice';
-import { Color, Font, Radius } from '@/shared/tokens';
+import { Color, Font, Gap, Radius } from '@/shared/tokens';
 import ProgressBar from '@/shared/ProgressBar/ProgressBar';
+import withRemove from '@/shared/HOC/withRemove';
 
-export default function ProjectCard({
-	id,
-	name,
-	picture,
-	direction,
-	total,
-	completed,
-}: ProjectSearch) {
+const CARD_HEIGHT = 93;
+
+export function ProjectCard({ id, name, picture, direction, total, completed }: ProjectSearch) {
 	const projectCompleted = completed === total;
 
 	return (
@@ -40,13 +36,18 @@ export default function ProjectCard({
 	);
 }
 
+export default withRemove(ProjectCard, CARD_HEIGHT);
+
 const styles = StyleSheet.create({
 	wrapper: {
 		paddingHorizontal: 20,
-		paddingVertical: 15,
 		borderColor: Color.border,
 		borderWidth: 1,
 		borderRadius: Radius.r16,
+		height: CARD_HEIGHT,
+		backgroundColor: Color.white,
+		justifyContent: 'center',
+		gap: Gap.g2,
 	},
 	header: {
 		flexDirection: 'row',

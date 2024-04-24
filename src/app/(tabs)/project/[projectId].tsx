@@ -70,7 +70,7 @@ export default function Project() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
 				{tasks.map((task) => (
-					<TaskCard key={task.id} task={task} onDelete={deleteTask} />
+					<TaskCard key={task.id} onRemove={() => deleteTask(task.id)} {...task} />
 				))}
 			</ScrollView>
 		</View>

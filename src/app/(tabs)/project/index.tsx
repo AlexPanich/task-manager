@@ -2,7 +2,7 @@ import SearchIcon from '@/assets/icons/search';
 import ProjectCard from '@/components/ProjectCard/ProjectCard';
 import Input from '@/shared/Input/Input';
 import { Color, Font, Gap } from '@/shared/tokens';
-import { searchProjects } from '@/store/projects.slice';
+import { removeProject, searchProjects } from '@/store/projects.slice';
 import { RootState, useAppDispatch } from '@/store/store';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -22,6 +22,10 @@ export default function ProjectsPage() {
 		dispatch(searchProjects(search));
 	}, [search, isFoucused]);
 
+	const deleteProject = (id: number) => {
+		dispatch(removeProject(id));
+	};
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.searchWrapper}>
@@ -35,7 +39,7 @@ export default function ProjectsPage() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
 				{projects.map((project) => (
-					<ProjectCard key={project.id} {...project} />
+					<ProjectCard key={project.id} {...project} onRemove={() => deleteProject(project.id)} />
 				))}
 			</ScrollView>
 		</View>

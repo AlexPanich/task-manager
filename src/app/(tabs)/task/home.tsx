@@ -58,7 +58,7 @@ export default function HomePage() {
 
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.taskList}>
 				{tasks.map((task) => (
-					<TaskCard key={task.id} task={task} onDelete={deleteTask} />
+					<TaskCard key={task.id} onRemove={() => deleteTask(task.id)} {...task} />
 				))}
 			</ScrollView>
 		</View>

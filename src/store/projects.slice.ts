@@ -4,6 +4,7 @@ import {
 	selectProjectsWithTasksBySearch,
 	selectProjectById,
 	updateProject,
+	deleteProject,
 } from '@/DB/dataBase';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ImageSourcePropType } from 'react-native';
@@ -101,6 +102,11 @@ export const getProjectById = createAsyncThunk('projects/getById', async (id: nu
 	return mapFromDB(rows)[0];
 });
 
+export const removeProject = createAsyncThunk('projects/delete', async (id: number) => {
+	await deleteProject(id);
+	return id;
+});
+
 export const projectsSlice = createSlice({
 	name: 'projects',
 	initialState,
@@ -114,6 +120,9 @@ export const projectsSlice = createSlice({
 		});
 		builder.addCase(getProjectById.fulfilled, (state, action) => {
 			state.project = action.payload;
+		});
+		builder.addCase(removeProject.fulfilled, (state, action) => {
+			state.projects = state.projects.filter((project) => project.id !== action.payload);
 		});
 	},
 });
