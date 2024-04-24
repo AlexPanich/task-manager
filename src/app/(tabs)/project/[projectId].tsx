@@ -1,4 +1,4 @@
-import { Image, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useMemo } from 'react';
 import { Color, Font, Gap } from '@/shared/tokens';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -34,13 +34,7 @@ export default function Project() {
 			return;
 		}
 		dispatch(getProjectById(+id));
-		if (Platform.OS === 'android') {
-			setTimeout(() => {
-				dispatch(getTaskByProjectId(+id));
-			}, 1000);
-		} else {
-			dispatch(getTaskByProjectId(+id));
-		}
+		dispatch(getTaskByProjectId(+id));
 	}, [id, isFoucused]);
 
 	const deleteTask = (id: number) => {

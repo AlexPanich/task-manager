@@ -24,13 +24,7 @@ export default function EditTaskPage() {
 
 	useEffect(() => {
 		dispatch(getTaskById(+id));
-		if (Platform.OS === 'android') {
-			setTimeout(() => {
-				dispatch(loadProjects());
-			}, 1000);
-		} else {
-			dispatch(loadProjects());
-		}
+		dispatch(loadProjects());
 	}, []);
 
 	useEffect(() => {

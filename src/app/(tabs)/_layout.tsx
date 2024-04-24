@@ -101,6 +101,7 @@ export default function TabsLayout() {
 					tabBarStyle: { height: insets.bottom + 82, borderTopWidth: 0, elevation: 0 },
 					tabBarShowLabel: false,
 				}}
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				screenListeners={({ route }: { route: any }) => ({
 					tabPress: (e) => {
 						if (route.state?.type === 'stack') {

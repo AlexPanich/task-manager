@@ -1,6 +1,8 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import Queue from './Queue';
 
 const dbName = 'mySQLiteDB.db';
 
@@ -63,10 +65,29 @@ export default function useLoadDB() {
 	return [loaded, error] as const;
 }
 
+let transactionAsyncOriginal: (
+	asyncCallback: SQLite.SQLTransactionAsyncCallback,
+	readOnly?: boolean,
+) => Promise<void>;
+
+const queue = new Queue<() => Promise<void>>();
 export function getDB() {
 	if (!db) {
 		throw Error('База данных не загружена');
 	}
+	if (Platform.OS !== 'android') {
+		return db;
+	}
+	if (!transactionAsyncOriginal) {
+		transactionAsyncOriginal = db.transactionAsync;
+	}
+	db.transactionAsync = (transaction, readOnly) =>
+		new Promise((resolve) =>
+			queue.add(async () => {
+				await transactionAsyncOriginal(transaction, readOnly);
+				resolve();
+			}),
+		);
 	return db;
 }
 

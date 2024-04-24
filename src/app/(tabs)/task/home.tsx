@@ -1,6 +1,6 @@
 import { Color, Font, Gap } from '@/shared/tokens';
 import { RootState, useAppDispatch } from '@/store/store';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { searchProjects } from '@/store/projects.slice';
@@ -22,13 +22,7 @@ export default function HomePage() {
 			return;
 		}
 		dispatch(searchProjects(''));
-		if (Platform.OS === 'android') {
-			setTimeout(() => {
-				dispatch(getTasksNotDone());
-			}, 1000);
-		} else {
-			dispatch(getTasksNotDone());
-		}
+		dispatch(getTasksNotDone());
 	}, [isFoucused]);
 
 	const deleteTask = (id: number) => {
