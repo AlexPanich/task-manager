@@ -6,25 +6,15 @@ import { RootState, useAppDispatch } from '@/store/store';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { getProjectById } from '@/store/projects.slice';
-import { getTaskByProjectId } from '@/store/tasks.slice';
+import { getTaskByProjectId, removeTask } from '@/store/tasks.slice';
 import ProgressBar from '@/shared/ProgressBar/ProgressBar';
 import TaskCard from '@/components/TaskCard/TaskCard';
 import RoundButton from '@/shared/RoundButton/RoundButton';
 import EditBlackIcon from '@/assets/icons/edit-black';
-
-function getCountTaskText(count: number) {
-	const remainer = count % 10;
-	if (remainer === 1) {
-		return `${count} задача`;
-	}
-	if (remainer > 1 && remainer < 5) {
-		return `${count} задачи`;
-	}
-	return `${count} задач`;
-}
+import { getCountTaskText } from '@/shared/functions';
 
 export default function Project() {
-	const { id } = useLocalSearchParams();
+	const { projectId: id } = useLocalSearchParams();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const isFoucused = useIsFocused();
@@ -47,6 +37,10 @@ export default function Project() {
 		dispatch(getTaskByProjectId(+id));
 	}, [id, isFoucused]);
 
+	const deleteTask = (id: number) => {
+		dispatch(removeTask(id));
+	};
+
 	if (!project) {
 		return null;
 	}
@@ -56,7 +50,7 @@ export default function Project() {
 			<Stack.Screen
 				options={{
 					headerRight: () => (
-						<RoundButton onPress={() => router.push(`/edit-project/${id}`)}>
+						<RoundButton onPress={() => router.push(`/project/edit-project/${id}`)}>
 							<EditBlackIcon />
 						</RoundButton>
 					),
@@ -70,7 +64,7 @@ export default function Project() {
 			</View>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
 				{tasks.map((task) => (
-					<TaskCard {...task} />
+					<TaskCard key={task.id} onRemove={() => deleteTask(task.id)} {...task} />
 				))}
 			</ScrollView>
 		</View>

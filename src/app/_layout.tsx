@@ -10,12 +10,15 @@ import RoundButton from '@/shared/RoundButton/RoundButton';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
 import useLoadDB from '@/DB/dataBase';
 import { PortalProvider } from '@gorhom/portal';
+import { useAutentication } from '@/shared/hooks';
+import { Alert } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const router = useRouter();
 	const [dbLoaded, dbError] = useLoadDB();
+	const [auth, authError] = useAutentication();
 
 	const [fontsLoaded, fontError] = useFonts({
 		'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
@@ -24,16 +27,26 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if ((fontsLoaded || fontError) && (dbLoaded || dbError)) {
+		if ((fontsLoaded || fontError) && (dbLoaded || dbError) && auth) {
 			SplashScreen.hideAsync();
 		}
-	}, [fontsLoaded, fontError, dbLoaded, dbError]);
+	}, [fontsLoaded, fontError, dbLoaded, dbError, auth]);
 
-	if (!fontsLoaded && !fontError) {
-		return null;
-	}
+	useEffect(() => {
+		if (authError) {
+			Alert.alert('Ошибка аутентификации', authError);
+		}
 
-	if (!dbLoaded && !dbError) {
+		if (dbError) {
+			Alert.alert('Ошибка подключения к базе данных', dbError);
+		}
+
+		if (fontError) {
+			Alert.alert('Ошибка загрузки шрифтов', fontError.message);
+		}
+	}, [authError, dbError, fontError]);
+
+	if (!fontsLoaded || fontError || !dbLoaded || dbError || !auth) {
 		return null;
 	}
 

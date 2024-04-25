@@ -4,7 +4,7 @@ import HomeIcon from '@/assets/icons/home';
 import HomeActiveIcon from '@/assets/icons/home-active';
 import PlusIcon from '@/assets/icons/plus';
 import { Color, Font, Gap, Radius } from '@/shared/tokens';
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
 	StyleSheet,
@@ -26,6 +26,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 export default function TabsLayout() {
 	const insets = useSafeAreaInsets();
+	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const animatedValue = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 	const ZERO = SCREEN_HEIGHT - 250 - insets.bottom;
@@ -100,16 +101,28 @@ export default function TabsLayout() {
 					tabBarStyle: { height: insets.bottom + 82, borderTopWidth: 0, elevation: 0 },
 					tabBarShowLabel: false,
 				}}
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				screenListeners={({ route }: { route: any }) => ({
+					tabPress: (e) => {
+						if (route.state?.type === 'stack') {
+							if (route.name !== route.state.routes[route.state.index].name) {
+								e.preventDefault();
+								const path = route.name === 'task' ? 'task/home' : 'project';
+								router.replace(`/(tabs)/${path}`);
+							}
+						}
+					},
+				})}
 			>
 				<Tabs.Screen
-					name="home"
+					name="task"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <HomeActiveIcon /> : <HomeIcon />),
 						tabBarItemStyle: styles.itemLeft,
 					}}
 				/>
 				<Tabs.Screen
-					name="(project)"
+					name="project"
 					options={{
 						tabBarIcon: ({ focused }) => (focused ? <FolderActiveIcon /> : <FolderIcon />),
 						tabBarItemStyle: styles.itemRight,

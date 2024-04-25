@@ -1,6 +1,8 @@
 import * as FileSystem from 'expo-file-system';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
+import Queue from './Queue';
 
 const dbName = 'mySQLiteDB.db';
 
@@ -46,7 +48,7 @@ async function loadDatabase() {
 	} else {
 		db = SQLite.openDatabase(dbName);
 		console.log('База данных загружена');
-		// FileSystem.deleteAsync(dbFilePath);
+		// FileSystem.deleteAsync(dbFilePath).then(() => console.log('База данных удалена'));
 	}
 }
 
@@ -60,13 +62,32 @@ export default function useLoadDB() {
 			.catch((err) => setError(`Ошибка подключения к базе данных: ${err.message}`));
 	}, []);
 
-	return [loaded, error];
+	return [loaded, error] as const;
 }
 
+let transactionAsyncOriginal: (
+	asyncCallback: SQLite.SQLTransactionAsyncCallback,
+	readOnly?: boolean,
+) => Promise<void>;
+
+const queue = new Queue<() => Promise<void>>();
 export function getDB() {
 	if (!db) {
 		throw Error('База данных не загружена');
 	}
+	if (Platform.OS !== 'android') {
+		return db;
+	}
+	if (!transactionAsyncOriginal) {
+		transactionAsyncOriginal = db.transactionAsync;
+	}
+	db.transactionAsync = (transaction, readOnly) =>
+		new Promise((resolve) =>
+			queue.add(async () => {
+				await transactionAsyncOriginal(transaction, readOnly);
+				resolve();
+			}),
+		);
 	return db;
 }
 
@@ -196,6 +217,77 @@ export async function selectTasksByProjectId<T>(projectId: number) {
 	return rows;
 }
 
+export async function selectTasksNotDone<T>() {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.progress < 100
+					ORDER BY t.date DESC
+				`,
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
+export async function selectTasksByDate<T>(date: string) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.date = ?
+					ORDER BY t.date DESC
+				`,
+				[date],
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
+export async function selectTaskById<T>(id: number) {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(
+				`
+					SELECT t.*, p.name AS [project_name], p.picture AS [project_picture], p.direction AS [project_direction]
+					FROM tasks AS t
+					LEFT JOIN projects AS p
+					ON t.project_id = p.id
+					WHERE t.id = ?
+					ORDER BY t.date DESC
+				`,
+				[id],
+			);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
+}
+
 export async function updateProject(
 	id: number,
 	{
@@ -215,6 +307,70 @@ export async function updateProject(
 				`UPDATE projects SET picture = ?, name = ?, direction = ? WHERE id = ?`,
 				[picture, name, direction, id],
 			);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function updateTaskProgress(id: number, progress: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`UPDATE tasks SET progress = ? WHERE id = ?`, [progress, id]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function updateTask(
+	id: number,
+	{
+		name,
+		date,
+		description,
+		project_id,
+	}: {
+		name: string;
+		date: string;
+		description: string;
+		project_id: number;
+	},
+) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(
+				`UPDATE tasks SET name = ?, date = ?, description = ?, project_id = ? WHERE id = ?`,
+				[name, date, description, project_id, id],
+			);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function deleteTask(id: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`DELETE FROM tasks WHERE id = ?`, [id]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function deleteProject(id: number) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`DELETE FROM projects WHERE id = ?`, [id]);
 		});
 		return null;
 	} catch (error) {

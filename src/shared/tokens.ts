@@ -8,6 +8,7 @@ export const Color = {
 	white: '#ffffff',
 	green: '#8bb35a',
 	lightGreen: '#c4e29f',
+	lightBlue: '#c5dafd',
 	gray: '#848a94',
 	overlay: '#00000040',
 	transparent: '#ffffff00',
@@ -34,14 +35,17 @@ export const Radius = {
 	r2_5: 2.5,
 	r4: 4,
 	r12: 12,
+	r15: 15,
 	r16: 16,
 	r18: 18,
+	r21: 21,
 	r30: 30,
 	r50: 50,
 };
 
 export const Gap = {
 	g2: 2,
+	g8: 8,
 	g10: 10,
 	g12: 12,
 	g16: 16,

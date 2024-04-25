@@ -3,17 +3,17 @@ import Input from '@/shared/Input/Input';
 import { Color, Gap } from '@/shared/tokens';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '@/store/store';
 import { Project, loadProjects } from '@/store/projects.slice';
 import DatePicker from '@/shared/DatePicker/DatePicker';
 import SelectPicker from '@/shared/SelectPicker/SelectPicker';
-import { TaskBody, formatDate, saveTask } from '@/store/tasks.slice';
+import { TaskBody, editTask, formatDate, getTaskById } from '@/store/tasks.slice';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function AddTaskPage() {
-	const insets = useSafeAreaInsets();
-
+export default function EditTaskPage() {
+	const { taskId: id } = useLocalSearchParams();
+	const { task } = useSelector((state: RootState) => state.tasks);
 	const { projects } = useSelector((state: RootState) => state.projects);
 	const dispatch = useAppDispatch();
 
@@ -23,16 +23,25 @@ export default function AddTaskPage() {
 	const [description, setDescription] = useState<string>('');
 
 	useEffect(() => {
+		dispatch(getTaskById(+id));
 		dispatch(loadProjects());
 	}, []);
 
-	const addTask = () => {
+	useEffect(() => {
+		if (!task || !projects) return;
+		setName(task.name);
+		setDate(new Date(task.date));
+		setProject(projects.find((project) => project.id === task.project.id));
+		setDescription(task.description);
+	}, [task, projects]);
+
+	const update = () => {
 		if (!name || !date || !project) {
 			return;
 		}
 		const task: TaskBody = { name, date: formatDate(date), project, description };
 
-		dispatch(saveTask(task));
+		dispatch(editTask({ id: +id, task }));
 	};
 
 	return (
@@ -63,11 +72,7 @@ export default function AddTaskPage() {
 					onChangeText={setDescription}
 				/>
 			</KeyboardAvoidingView>
-			<Button
-				style={[styles.button, { bottom: insets.bottom + 30 }]}
-				onPress={addTask}
-				title="Сохранить"
-			/>
+			<Button style={styles.button} onPress={update} title="Обновить" />
 		</View>
 	);
 }
@@ -91,7 +96,6 @@ const styles = StyleSheet.create({
 	button: {
 		width: 220,
 		alignSelf: 'center',
-		position: 'absolute',
 	},
 	textArea: {
 		height: 146,

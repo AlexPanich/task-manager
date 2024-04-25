@@ -1,33 +1,43 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Task } from '@/store/tasks.slice';
 import { Color, Font, Gap, Radius } from '@/shared/tokens';
+import { Link } from 'expo-router';
+import CircleProgress from './CircleProgress';
+import withRemove from '@/shared/HOC/withRemove';
 
-export default function TaskCard({ project: { name: projectName }, name, date, progress }: Task) {
+const CARD_HEIGHT = 80;
+
+export function TaskCard({ project: { name: projectName }, name, date, progress, id }: Task) {
 	return (
-		<View style={styles.wrapper}>
-			<View style={styles.info}>
-				<Text style={styles.projectName}>{projectName}</Text>
-				<Text style={styles.name}>{name}</Text>
-				<Text style={styles.date}>{new Date(date).toLocaleDateString()}</Text>
-			</View>
-			<View>
-				<Text style={styles.progressText}>{progress}%</Text>
-			</View>
-		</View>
+		<Link href={`/(tabs)/task/${id}`} asChild>
+			<Pressable>
+				<View style={styles.wrapper}>
+					<View style={styles.info}>
+						<Text style={styles.projectName}>{projectName}</Text>
+						<Text style={styles.name}>{name}</Text>
+						<Text style={styles.date}>{new Date(date).toLocaleDateString()}</Text>
+					</View>
+					<View>
+						<CircleProgress progress={progress} />
+					</View>
+				</View>
+			</Pressable>
+		</Link>
 	);
 }
 
 const styles = StyleSheet.create({
 	wrapper: {
 		paddingHorizontal: 20,
-		paddingVertical: 15,
 		borderColor: Color.border,
 		borderWidth: 1,
 		borderRadius: Radius.r16,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
+		backgroundColor: Color.white,
+		height: CARD_HEIGHT,
 	},
 	info: {
 		gap: Gap.g2,
@@ -47,9 +57,6 @@ const styles = StyleSheet.create({
 		fontSize: Font.size.f12,
 		fontFamily: Font.family.regular,
 	},
-	progressText: {
-		color: Color.primaryText,
-		fontSize: Font.size.f12,
-		fontFamily: Font.family.medium,
-	},
 });
+
+export default withRemove(TaskCard, CARD_HEIGHT);

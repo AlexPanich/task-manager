@@ -6,7 +6,6 @@ import { ProjectBody, editProject, getProjectById, pictures } from '@/store/proj
 import { RootState, useAppDispatch } from '@/store/store';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -16,7 +15,6 @@ export default function EditProjectPage() {
 	const [picture, setPicture] = useState(pictures[0]);
 	const [name, setName] = useState<string>('');
 	const [direction, setDirection] = useState<string>('');
-	const insets = useSafeAreaInsets();
 	const dispatch = useAppDispatch();
 	const { project } = useSelector((state: RootState) => state.projects);
 	const isFoucused = useIsFocused();
@@ -62,11 +60,7 @@ export default function EditProjectPage() {
 					<Input label="Направление" value={direction} onChangeText={setDirection} />
 				</View>
 			</View>
-			<Button
-				style={[styles.button, { marginBottom: insets.bottom }]}
-				onPress={update}
-				title="Сохранить"
-			/>
+			<Button style={styles.button} onPress={update} title="Обновить" />
 		</View>
 	);
 }
@@ -88,6 +82,6 @@ const styles = StyleSheet.create({
 	button: {
 		width: '75%',
 		alignSelf: 'center',
-		marginTop: 60,
+		marginBottom: 40,
 	},
 });
