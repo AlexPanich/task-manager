@@ -15,7 +15,7 @@ export default function WelcomePage() {
 				<Text style={styles.promo}>
 					Управляй <Text style={styles.promoAccent}>Задачами</Text> и достигай результата ✌
 				</Text>
-				<Link href="/create-account" style={styles.arrowLink}>
+				<Link href="/auth" style={styles.arrowLink}>
 					<ArrowRightIcon />
 				</Link>
 			</ImageBackground>

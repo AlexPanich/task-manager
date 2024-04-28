@@ -1,27 +1,39 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Color, Font, Gap } from '@/shared/tokens';
 import Input from '@/shared/Input/Input';
 import Button from '@/shared/Button/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store/store';
-import { userActions } from '@/store/user.slice';
+import { getUser, saveUser } from '@/store/user.slice';
+import { RootState, useAppDispatch } from '@/store/store';
 import { useRouter } from 'expo-router';
+import { useSelector } from 'react-redux';
 
 export default function CreateAccountPage() {
 	const insets = useSafeAreaInsets();
-	const { name, surname } = useSelector((state: RootState) => state.user);
-	const dispatch = useDispatch<AppDispatch>();
+	const [name, setName] = useState('');
+	const [surname, setSurname] = useState('');
+	const [password, setPassword] = useState('');
+	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const { user } = useSelector((state: RootState) => state.user);
 
-	const setName = (text: string) => {
-		dispatch(userActions.setName(text));
+	const createUser = () => {
+		if (!name || !surname || !password) {
+			return;
+		}
+
+		dispatch(saveUser({ name, surname, password }));
 	};
 
-	const setSurname = (text: string) => {
-		dispatch(userActions.setSurname(text));
-	};
+	useEffect(() => {
+		console.log(user);
+		if (user) {
+			router.replace('/(tabs)/task/home');
+		} else {
+			dispatch(getUser());
+		}
+	}, [user]);
 
 	return (
 		<View style={[styles.wrapper, { paddingTop: insets.top }]}>
@@ -30,8 +42,15 @@ export default function CreateAccountPage() {
 			<View style={styles.fields}>
 				<Input placeholder="Ваше имя" value={name} onChangeText={setName} />
 				<Input placeholder="Ваша фамилия" value={surname} onChangeText={setSurname} />
+				<Input
+					placeholder="Пароль 6 цифр"
+					maxLength={6}
+					inputMode="numeric"
+					value={password}
+					onChangeText={setPassword}
+				/>
 			</View>
-			<Button title="Начать" onPress={() => router.push('/(tabs)/task/home')} />
+			<Button title="Начать" onPress={createUser} />
 		</View>
 	);
 }

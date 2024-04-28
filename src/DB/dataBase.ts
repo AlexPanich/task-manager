@@ -32,6 +32,13 @@ async function createDatabase() {
 					  FOREIGN KEY (project_id) REFERENCES Projects(id) ON DELETE CASCADE
 				)
 			`);
+		await tx.executeSqlAsync(`
+				CREATE TABLE IF NOT EXISTS users (
+					  id INTEGER PRIMARY KEY AUTOINCREMENT,	
+					  name VARCHAR(50) NOT NULL,
+					  surname VARCHAR(50) NOT NULL,
+					  password VARCHAR(6) NOT NULL
+				)`);
 	});
 }
 
@@ -376,4 +383,42 @@ export async function deleteProject(id: number) {
 	} catch (error) {
 		return error;
 	}
+}
+
+export async function insertUser({
+	name,
+	surname,
+	password,
+}: {
+	name: string;
+	surname: string;
+	password: string;
+}) {
+	const db = getDB();
+	try {
+		await db.transactionAsync(async (tx) => {
+			await tx.executeSqlAsync(`INSERT INTO users (name, surname, password) VALUES (?, ?, ?)`, [
+				name,
+				surname,
+				password,
+			]);
+		});
+		return null;
+	} catch (error) {
+		return error;
+	}
+}
+
+export async function selectUser<T>() {
+	const db = getDB();
+	let rows: T[] = [];
+	try {
+		await db.transactionAsync(async (tx) => {
+			const result = await tx.executeSqlAsync(`SELECT * FROM users WHERE id = 1`, []);
+			rows = result.rows as T[];
+		}, true);
+	} catch (error) {
+		console.log(error);
+	}
+	return rows;
 }
