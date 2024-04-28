@@ -27,7 +27,6 @@ export default function CreateAccountPage() {
 	};
 
 	useEffect(() => {
-		console.log(user);
 		if (user) {
 			router.replace('/(tabs)/task/home');
 		} else {
