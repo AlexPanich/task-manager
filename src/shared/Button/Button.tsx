@@ -1,47 +1,20 @@
-import {
-	Pressable,
-	PressableProps,
-	Text,
-	StyleSheet,
-	Animated,
-	GestureResponderEvent,
-} from 'react-native';
+import { Text, StyleSheet, PressableProps } from 'react-native';
 import { Color, Font, Radius } from '../tokens';
-import { useRef } from 'react';
+import { withBackgroundAnimation } from '../HOC/withBackgroundAnimation';
 
-export default function Button({ title, ...props }: PressableProps & { title: string }) {
-	const animagedValue = useRef(new Animated.Value(100)).current;
-	const color = animagedValue.interpolate({
-		inputRange: [0, 100],
-		outputRange: [Color.primaryHover, Color.primary],
-	});
-
-	const hoverIn = (event: GestureResponderEvent) => {
-		Animated.timing(animagedValue, {
-			toValue: 0,
-			useNativeDriver: true,
-			duration: 100,
-		}).start();
-		props.onPressIn && props.onPressIn(event);
-	};
-
-	const hoverOut = (event: GestureResponderEvent) => {
-		Animated.timing(animagedValue, {
-			toValue: 100,
-			useNativeDriver: true,
-			duration: 100,
-		}).start();
-		props.onPressOut && props.onPressOut(event);
-	};
-
-	return (
-		<Pressable {...props} onPressIn={hoverIn} onPressOut={hoverOut}>
-			<Animated.View style={{ ...styles.wrapper, backgroundColor: color }}>
-				<Text style={styles.title}>{title}</Text>
-			</Animated.View>
-		</Pressable>
-	);
+export function Button({ title = '' }: { title: string }) {
+	return <Text style={styles.title}>{title}</Text>;
 }
+
+function mapProps({ title, ...props }: { title: string } & PressableProps) {
+	return {
+		pressableProps: props,
+		componentProps: { title },
+		animatedContainerStyle: styles.wrapper,
+	};
+}
+
+export default withBackgroundAnimation(Button, mapProps);
 
 const styles = StyleSheet.create({
 	wrapper: {

@@ -11,32 +11,29 @@ type WrapperProps = {
 
 export default function withRemove<T>(Component: FC<T>, height: number) {
 	const WrapperComponent: FC<T & WrapperProps> = ({ onRemove, ...props }: T & WrapperProps) => {
-		const wrappedProps = {
-			...(props as unknown as JSX.IntrinsicAttributes & T),
-		};
-		const animatedValue = useRef(new Animated.Value(0)).current;
-		const animatedHeigth = useRef(new Animated.Value(height)).current;
+		const translateX = useRef(new Animated.Value(0)).current;
+		const heightValue = useRef(new Animated.Value(height)).current;
 
-		const backAnimation = Animated.spring(animatedValue, {
+		const backAnimation = Animated.spring(translateX, {
 			toValue: 0,
 			useNativeDriver: true,
 		}).start;
 
-		const deleteAnimation = Animated.timing(animatedValue, {
+		const deleteAnimation = Animated.timing(translateX, {
 			toValue: -SCREEN_WIDTH,
 			useNativeDriver: true,
 			duration: 250,
 		}).start;
 
-		const heightAnimation = Animated.timing(animatedHeigth, {
+		const heightAnimation = Animated.timing(heightValue, {
 			toValue: 0,
 			useNativeDriver: false,
 			duration: 250,
 		}).start;
 
 		const start = (event: GestureResponderEvent) => {
-			animatedValue.setOffset(-event.nativeEvent.pageX);
-			animatedValue.setValue(event.nativeEvent.pageX);
+			translateX.setOffset(-event.nativeEvent.pageX);
+			translateX.setValue(event.nativeEvent.pageX);
 			return true;
 		};
 
@@ -44,7 +41,7 @@ export default function withRemove<T>(Component: FC<T>, height: number) {
 			[
 				{
 					nativeEvent: {
-						pageX: animatedValue,
+						pageX: translateX,
 					},
 				},
 			],
@@ -58,7 +55,7 @@ export default function withRemove<T>(Component: FC<T>, height: number) {
 		};
 
 		const release = (event: GestureResponderEvent) => {
-			animatedValue.flattenOffset();
+			translateX.flattenOffset();
 			const { pageX, locationX } = event.nativeEvent;
 			if (pageX + SCREEN_WIDTH - locationX < SCREEN_WIDTH * 0.66) {
 				deleteAnimation(() => {
@@ -69,7 +66,7 @@ export default function withRemove<T>(Component: FC<T>, height: number) {
 			backAnimation();
 		};
 
-		const opacity = animatedValue.interpolate({
+		const opacity = translateX.interpolate({
 			inputRange: [-SCREEN_WIDTH * 0.33, 0],
 			outputRange: [1, 0],
 			extrapolate: 'clamp',
@@ -77,9 +74,9 @@ export default function withRemove<T>(Component: FC<T>, height: number) {
 		return (
 			<Animated.View
 				style={{
-					height: animatedHeigth,
-					opacity: animatedHeigth.interpolate({ inputRange: [0, 80], outputRange: [0, 1] }),
-					marginBottom: animatedHeigth.interpolate({
+					height: heightValue,
+					opacity: heightValue.interpolate({ inputRange: [0, 80], outputRange: [0, 1] }),
+					marginBottom: heightValue.interpolate({
 						inputRange: [0, 80],
 						outputRange: [-Gap.g19, 0],
 					}),
@@ -89,14 +86,14 @@ export default function withRemove<T>(Component: FC<T>, height: number) {
 					<DeleteIcon />
 				</Animated.View>
 				<Animated.View
-					style={{ transform: [{ translateX: animatedValue }] }}
+					style={{ transform: [{ translateX }] }}
 					onStartShouldSetResponder={start}
 					onMoveShouldSetResponder={start}
 					onResponderMove={move}
 					onResponderRelease={release}
 					onResponderTerminationRequest={() => false}
 				>
-					<Component {...wrappedProps} />
+					<Component {...(props as unknown as JSX.IntrinsicAttributes & T)} />
 				</Animated.View>
 			</Animated.View>
 		);
