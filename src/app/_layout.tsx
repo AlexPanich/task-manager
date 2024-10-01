@@ -10,15 +10,14 @@ import RoundButton from '@/shared/RoundButton/RoundButton';
 import ArrowBackIcon from '@/assets/icons/arrow-back';
 import useLoadDB from '@/DB/dataBase';
 import { PortalProvider } from '@gorhom/portal';
-import { useAutentication } from '@/shared/hooks';
 import { Alert } from 'react-native';
+import UserInactivity from '@/providers/UserInactivity';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const router = useRouter();
 	const [dbLoaded, dbError] = useLoadDB();
-	const [auth, authError] = useAutentication();
 
 	const [fontsLoaded, fontError] = useFonts({
 		'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
@@ -27,16 +26,12 @@ export default function RootLayout() {
 	});
 
 	useEffect(() => {
-		if ((fontsLoaded || fontError) && (dbLoaded || dbError) && auth) {
+		if ((fontsLoaded || fontError) && (dbLoaded || dbError)) {
 			SplashScreen.hideAsync();
 		}
-	}, [fontsLoaded, fontError, dbLoaded, dbError, auth]);
+	}, [fontsLoaded, fontError, dbLoaded, dbError]);
 
 	useEffect(() => {
-		if (authError) {
-			Alert.alert('Ошибка аутентификации', authError);
-		}
-
 		if (dbError) {
 			Alert.alert('Ошибка подключения к базе данных', dbError);
 		}
@@ -44,71 +39,79 @@ export default function RootLayout() {
 		if (fontError) {
 			Alert.alert('Ошибка загрузки шрифтов', fontError.message);
 		}
-	}, [authError, dbError, fontError]);
+	}, [dbError, fontError]);
 
-	if (!fontsLoaded || fontError || !dbLoaded || dbError || !auth) {
+	if (!fontsLoaded || fontError || !dbLoaded || dbError) {
 		return null;
 	}
 
 	return (
 		<PortalProvider>
 			<ReduxProvider store={store}>
-				<SafeAreaProvider>
-					<StatusBar style="dark" />
-					<Stack
-						screenOptions={{
-							headerShadowVisible: false,
-							headerTitleAlign: 'center',
-							headerTitleStyle: {
-								color: Color.primaryText,
-								fontSize: Font.size.f18,
-								fontFamily: Font.family.medium,
-							},
-						}}
-					>
-						<Stack.Screen
-							name="index"
-							options={{
-								headerShown: false,
+				<UserInactivity>
+					<SafeAreaProvider>
+						<StatusBar style="dark" />
+						<Stack
+							screenOptions={{
+								headerShadowVisible: false,
+								headerTitleAlign: 'center',
+								headerTitleStyle: {
+									color: Color.primaryText,
+									fontSize: Font.size.f18,
+									fontFamily: Font.family.medium,
+								},
 							}}
-						/>
-						<Stack.Screen
-							name="create-account"
-							options={{
-								headerTitle: 'Создание аккаунта',
-								headerLeft: () => '',
-							}}
-						/>
-						<Stack.Screen
-							name="(tabs)"
-							options={{
-								headerShown: false,
-							}}
-						/>
-						<Stack.Screen
-							name="add-task"
-							options={{
-								headerTitle: 'Добавить задачу',
-								headerLeft: () => (
-									<RoundButton onPress={() => router.back()}>
-										<ArrowBackIcon />
-									</RoundButton>
-								),
-							}}
-						/>
-						<Stack.Screen
-							name="add-project"
-							options={{
-								headerTitle: 'Добавить проект',
-								headerLeft: () => (
-									<RoundButton onPress={() => router.back()}>
-										<ArrowBackIcon />
-									</RoundButton>
-								),
-							}}
-						/>
-					</Stack>
-				</SafeAreaProvider>
+						>
+							<Stack.Screen
+								name="index"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen name="auth" options={{ headerShown: false, animation: 'none' }} />
+							<Stack.Screen
+								name="(modals)/white"
+								options={{ headerShown: false, animation: 'none' }}
+							/>
+							<Stack.Screen
+								name="create-account"
+								options={{
+									headerTitle: 'Создание аккаунта',
+									headerLeft: () => '',
+									animation: 'none',
+								}}
+							/>
+							<Stack.Screen
+								name="(tabs)"
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name="add-task"
+								options={{
+									headerTitle: 'Добавить задачу',
+									headerLeft: () => (
+										<RoundButton onPress={() => router.back()}>
+											<ArrowBackIcon />
+										</RoundButton>
+									),
+								}}
+							/>
+							<Stack.Screen
+								name="add-project"
+								options={{
+									headerTitle: 'Добавить проект',
+									headerLeft: () => (
+										<RoundButton onPress={() => router.back()}>
+											<ArrowBackIcon />
+										</RoundButton>
+									),
+								}}
+							/>
+						</Stack>
+					</SafeAreaProvider>
+				</UserInactivity>
 			</ReduxProvider>
 		</PortalProvider>
 	);
